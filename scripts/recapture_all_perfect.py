@@ -47,8 +47,8 @@ async def main():
         f.unlink()
 
     print("Rendering web frame and configuring live mission state...")
-    frame_b64 = await render_frame_base64()
-    setup_live_mission_state(frame_b64)
+    frame_b64, elements = await render_frame_base64()
+    setup_live_mission_state(frame_b64, elements)
 
     port = 9675
     print(f"Starting server on port {port}...")
@@ -100,8 +100,8 @@ async def main():
             step_number=4,
             url="https://news.ycombinator.com/item?id=4189201",
             title="BrowserPilot: Autonomous a11y & stealth web agent | Hacker News",
-            thought="Target element [7] 'Upvote (342)' to submit upvote action. Requires co-pilot confirmation before mutating state.",
-            action=ActionCommand(action="click", element_id=7),
+            thought="Target element [8] 'Upvote (342)' to submit upvote action. Requires co-pilot confirmation before mutating state.",
+            action=ActionCommand(action="click", element_id=8),
             prompt_tokens=450,
             completion_tokens=65,
             total_tokens=515,
@@ -160,9 +160,14 @@ async def main():
             frame_num += 1
             await asyncio.sleep(0.1)
 
-        # Phase 2: Mouse cursor moves in human-like cubic Bézier curve toward element [7]
+        # Phase 2: Mouse cursor moves in human-like cubic Bézier curve toward element [8] Upvote button
         start_x, start_y = 360, 480
         target_x, target_y = 705, 215
+
+        badge_box = await gif_page.locator("span:text-is('8')").first.bounding_box()
+        if badge_box:
+            target_x = badge_box["x"] + badge_box["width"] / 2
+            target_y = badge_box["y"] + badge_box["height"] / 2
 
         steps = 8
         for i in range(1, steps + 1):

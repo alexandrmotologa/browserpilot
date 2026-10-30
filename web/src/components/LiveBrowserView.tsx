@@ -199,12 +199,12 @@ export const LiveBrowserView: React.FC<LiveBrowserViewProps> = ({
                     style={{
                       left: `${leftPct}%`,
                       top: `${topPct}%`,
-                      width: `${Math.max(widthPct, 1.2)}%`,
-                      height: `${Math.max(heightPct, 1.2)}%`,
+                      width: `${widthPct}%`,
+                      height: `${heightPct}%`,
                     }}
-                    className="absolute border border-sky-400/40 bg-sky-500/10 pointer-events-none transition-all group"
+                    className="absolute border border-sky-400/80 bg-sky-500/[0.06] pointer-events-none rounded transition-all"
                   >
-                    <span className="absolute -top-3 -left-1 px-1 py-0.5 bg-slate-900 border border-sky-400 text-sky-300 font-mono text-[8px] sm:text-[9px] font-bold rounded shadow-md leading-none">
+                    <span className="absolute -top-3.5 left-0 bg-sky-400 text-slate-950 font-mono text-[8px] sm:text-[9px] font-black px-1 rounded-sm leading-none select-none shadow">
                       {el.id}
                     </span>
                   </div>

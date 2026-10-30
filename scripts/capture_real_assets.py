@@ -15,7 +15,7 @@ from playwright.async_api import async_playwright
 import uvicorn
 from browserpilot.agent.actions import ActionCommand
 from browserpilot.agent.planner import AgentPlanner, AgentStep
-from browserpilot.dom.a11y_tree import ActionableElement
+from browserpilot.dom.a11y_tree import AccessibilityTreeParser, ActionableElement
 from browserpilot.server.app import create_app
 from browserpilot.server.routes import state
 from browserpilot.server.ws_telemetry import telemetry_hub
@@ -74,14 +74,14 @@ def build_synthetic_web_frame() -> str:
     align-items: center;
     justify-content: space-between;
   }
-  .brand { display: flex; align-items: center; gap: 12px; }
+  .brand { display: flex; align-items: center; gap: 14px; }
   .logo-box {
     width: 32px; height: 32px; background: #ff6600; border-radius: 6px;
     display: flex; align-items: center; justify-content: center; font-weight: bold; color: white; font-size: 18px;
   }
   .site-title { font-size: 16px; font-weight: 700; color: #f8fafc; }
-  .nav-links { display: flex; gap: 20px; font-size: 13px; color: #94a3b8; }
-  .nav-links a { color: inherit; text-decoration: none; }
+  .nav-links { display: flex; gap: 28px; font-size: 13px; margin-left: 24px; }
+  .nav-links a { color: #94a3b8; text-decoration: none; font-weight: 500; }
   .nav-links a.active { color: #38bdf8; font-weight: 600; }
   .search-bar {
     background: #1e293b; border: 1px solid #334155; border-radius: 8px;
@@ -91,25 +91,30 @@ def build_synthetic_web_frame() -> str:
     padding: 24px 32px;
     display: flex;
     flex-direction: column;
-    gap: 14px;
+    gap: 16px;
   }
   .story-card {
     background: #131c2e;
     border: 1px solid #1e293b;
     border-radius: 10px;
-    padding: 14px 18px;
+    padding: 14px 20px;
     display: flex;
     align-items: center;
     justify-content: space-between;
   }
-  .story-left { display: flex; align-items: center; gap: 16px; }
+  .story-left { display: flex; align-items: center; gap: 16px; min-width: 0; flex: 1; }
   .rank { font-size: 18px; font-weight: 700; color: #64748b; width: 28px; text-align: center; }
-  .story-title { font-size: 15px; font-weight: 600; color: #f1f5f9; margin-bottom: 4px; }
-  .story-domain { font-size: 12px; color: #38bdf8; text-decoration: none; margin-left: 6px; }
+  .story-content { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+  .story-title {
+    font-size: 15px; font-weight: 600; color: #f1f5f9; text-decoration: none;
+    display: inline-block;
+  }
+  .story-title:hover { color: #38bdf8; }
+  .story-domain { font-size: 12px; color: #38bdf8; text-decoration: none; margin-left: 8px; font-weight: normal; }
   .meta { font-size: 12px; color: #64748b; display: flex; gap: 12px; align-items: center; }
   .vote-btn {
     background: #0284c7; color: white; border: none; border-radius: 6px;
-    padding: 6px 14px; font-size: 12px; font-weight: 600; cursor: pointer;
+    padding: 8px 16px; font-size: 12px; font-weight: 600; cursor: pointer; flex-shrink: 0;
   }
   .badge-tag {
     background: rgba(56, 189, 248, 0.15); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.3);
@@ -123,23 +128,21 @@ def build_synthetic_web_frame() -> str:
       <div class="logo-box">Y</div>
       <div class="site-title">Hacker News</div>
       <div class="nav-links">
-        <a href="#" class="active">top</a>
-        <a href="#">new</a>
-        <a href="#">past</a>
-        <a href="#">comments</a>
-        <a href="#">ask</a>
-        <a href="#">show</a>
-        <a href="#">jobs</a>
+        <a href="#" class="active">Top</a>
+        <a href="#">New</a>
+        <a href="#">Comments</a>
+        <a href="#">Ask HN</a>
+        <a href="#">Show HN</a>
       </div>
     </div>
-    <input type="text" class="search-bar" value="browser automation agents..." readonly>
+    <input type="text" class="search-bar" value="browser automation agents..." placeholder="Search..." readonly>
   </header>
   <main>
     <div class="story-card">
       <div class="story-left">
         <div class="rank">1.</div>
-        <div>
-          <div class="story-title">BrowserPilot: Autonomous a11y & stealth web agent <a href="#" class="story-domain">(github.com/browserpilot)</a></div>
+        <div class="story-content">
+          <div><a href="https://github.com/browserpilot" class="story-title">BrowserPilot: Autonomous a11y & stealth web agent</a><span class="story-domain">(github.com)</span></div>
           <div class="meta">
             <span>342 points</span>
             <span>by alexandrm</span>
@@ -155,8 +158,8 @@ def build_synthetic_web_frame() -> str:
     <div class="story-card">
       <div class="story-left">
         <div class="rank">2.</div>
-        <div>
-          <div class="story-title">Why accessibility trees reduce LLM token usage by 80% <a href="#" class="story-domain">(deepmind.google)</a></div>
+        <div class="story-content">
+          <div><a href="https://deepmind.google" class="story-title">Why accessibility trees reduce LLM token usage by 80%</a><span class="story-domain">(deepmind.google)</span></div>
           <div class="meta">
             <span>287 points</span>
             <span>by techlead</span>
@@ -171,8 +174,8 @@ def build_synthetic_web_frame() -> str:
     <div class="story-card">
       <div class="story-left">
         <div class="rank">3.</div>
-        <div>
-          <div class="story-title">Evading Cloudflare Turnstile and DataDome with Chromium CDP patches <a href="#" class="story-domain">(blog.stealth.dev)</a></div>
+        <div class="story-content">
+          <div><a href="https://blog.stealth.dev" class="story-title">Evading Cloudflare Turnstile and DataDome with Chromium CDP patches</a><span class="story-domain">(stealth.dev)</span></div>
           <div class="meta">
             <span>219 points</span>
             <span>by reverse_eng</span>
@@ -188,8 +191,8 @@ def build_synthetic_web_frame() -> str:
     <div class="story-card">
       <div class="story-left">
         <div class="rank">4.</div>
-        <div>
-          <div class="story-title">Cubic Bézier mouse trajectories and micro-tremor simulation in Playwright <a href="#" class="story-domain">(arxiv.org)</a></div>
+        <div class="story-content">
+          <div><a href="https://arxiv.org" class="story-title">Cubic Bézier mouse trajectories and micro-tremor simulation in Playwright</a><span class="story-domain">(arxiv.org)</span></div>
           <div class="meta">
             <span>174 points</span>
             <span>by ml_researcher</span>
@@ -204,8 +207,8 @@ def build_synthetic_web_frame() -> str:
     <div class="story-card">
       <div class="story-left">
         <div class="rank">5.</div>
-        <div>
-          <div class="story-title">Stagehand vs Browser-Use: Benchmarking web agent architectures <a href="#" class="story-domain">(benchmark.ai)</a></div>
+        <div class="story-content">
+          <div><a href="https://benchmark.ai" class="story-title">Stagehand vs Browser-Use: Benchmarking web agent architectures</a><span class="story-domain">(benchmark.ai)</span></div>
           <div class="meta">
             <span>158 points</span>
             <span>by agentdev</span>
@@ -222,43 +225,24 @@ def build_synthetic_web_frame() -> str:
     return html_content
 
 
-def get_mock_actionable_elements() -> list[ActionableElement]:
-    """Return realistic ActionableElements corresponding to the synthetic webpage."""
-    return [
-        ActionableElement(id=1, role="link", tag="a", name="Hacker News", x=28, y=16, width=120, height=32),
-        ActionableElement(id=2, role="link", tag="a", name="top", x=160, y=22, width=30, height=20),
-        ActionableElement(id=3, role="link", tag="a", name="new", x=200, y=22, width=30, height=20),
-        ActionableElement(id=4, role="link", tag="a", name="comments", x=280, y=22, width=65, height=20),
-        ActionableElement(id=5, role="searchbox", tag="input", name="Search", x=972, y=16, width=280, height=34),
-        ActionableElement(id=6, role="link", tag="a", name="BrowserPilot: Autonomous a11y & stealth web agent", x=76, y=86, width=420, height=24),
-        ActionableElement(id=7, role="button", tag="button", name="Upvote (342)", x=1150, y=82, width=102, height=32),
-        ActionableElement(id=8, role="link", tag="a", name="Why accessibility trees reduce LLM token usage by 80%", x=76, y=176, width=480, height=24),
-        ActionableElement(id=9, role="button", tag="button", name="Upvote (287)", x=1150, y=172, width=102, height=32),
-        ActionableElement(id=10, role="link", tag="a", name="Evading Cloudflare Turnstile and DataDome with Chromium CDP patches", x=76, y=266, width=540, height=24),
-        ActionableElement(id=11, role="button", tag="button", name="Upvote (219)", x=1150, y=262, width=102, height=32),
-        ActionableElement(id=12, role="link", tag="a", name="Cubic Bézier mouse trajectories in Playwright", x=76, y=356, width=480, height=24),
-        ActionableElement(id=13, role="button", tag="button", name="Upvote (174)", x=1150, y=352, width=102, height=32),
-        ActionableElement(id=14, role="button", tag="button", name="Upvote (158)", x=1150, y=442, width=102, height=32),
-    ]
-
-
-async def render_frame_base64() -> str:
-    """Use Playwright to render the synthetic HTML and return clean base64 JPEG."""
+async def render_frame_base64() -> tuple[str, list[ActionableElement]]:
+    """Use Playwright to render the synthetic HTML and extract real a11y tree elements."""
     async with async_playwright() as p:
         browser = await p.chromium.launch(headless=True)
         page = await browser.new_page(viewport={"width": 1280, "height": 800})
         await page.set_content(build_synthetic_web_frame())
-        await page.wait_for_timeout(100)
+        await page.wait_for_timeout(200)
+        elements = await AccessibilityTreeParser.parse_page(page)
         screenshot_bytes = await page.screenshot(type="jpeg", quality=90)
         await browser.close()
-        return base64.b64encode(screenshot_bytes).decode("utf-8")
+        return base64.b64encode(screenshot_bytes).decode("utf-8"), elements
 
 
-def setup_live_mission_state(frame_b64: str):
+def setup_live_mission_state(frame_b64: str, elements: list[ActionableElement] | None = None):
     """Populate FastAPI server state with an authentic running mission."""
     state.browser_manager = MockBrowserManager()
     state.latest_frame = frame_b64
-    state.cached_elements = get_mock_actionable_elements()
+    state.cached_elements = elements if elements is not None else []
 
     planner = AgentPlanner(
         goal="Scrape top 5 AI stories from Hacker News and extract discussion statistics into JSON"
@@ -285,8 +269,8 @@ def setup_live_mission_state(frame_b64: str):
         step_number=2,
         url="https://news.ycombinator.com",
         title="Hacker News",
-        thought="Target element [7] 'Upvote (342)' to inspect discussion thread on autonomous browser agents.",
-        action=ActionCommand(action="click", element_id=7),
+        thought="Target element [8] 'Upvote (342)' to inspect discussion thread on autonomous browser agents.",
+        action=ActionCommand(action="click", element_id=8),
         prompt_tokens=480,
         completion_tokens=80,
         total_tokens=560,
