@@ -188,10 +188,12 @@ export const LiveBrowserView: React.FC<LiveBrowserViewProps> = ({
             {/* Injected Accessibility Bounding Badges */}
             {showOverlay &&
               elements.map((el) => {
-                const leftPct = (el.x / 1280) * 100;
-                const topPct = (el.y / 800) * 100;
-                const widthPct = (el.width / 1280) * 100;
-                const heightPct = (el.height / 800) * 100;
+                const padX = 3;
+                const padY = 2;
+                const leftPct = ((el.x - padX) / 1280) * 100;
+                const topPct = ((el.y - padY) / 800) * 100;
+                const widthPct = ((el.width + padX * 2) / 1280) * 100;
+                const heightPct = ((el.height + padY * 2) / 800) * 100;
 
                 return (
                   <div
@@ -202,7 +204,7 @@ export const LiveBrowserView: React.FC<LiveBrowserViewProps> = ({
                       width: `${widthPct}%`,
                       height: `${heightPct}%`,
                     }}
-                    className="absolute border border-sky-400/80 bg-sky-500/[0.06] pointer-events-none rounded transition-all"
+                    className="absolute border border-sky-400/80 bg-sky-500/[0.06] pointer-events-none rounded-[4px] transition-all"
                   >
                     <span className="absolute -top-3.5 left-0 bg-sky-400 text-slate-950 font-mono text-[8px] sm:text-[9px] font-black px-1 rounded-sm leading-none select-none shadow">
                       {el.id}

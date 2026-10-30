@@ -80,41 +80,45 @@ def build_synthetic_web_frame() -> str:
     display: flex; align-items: center; justify-content: center; font-weight: bold; color: white; font-size: 18px;
   }
   .site-title { font-size: 16px; font-weight: 700; color: #f8fafc; }
-  .nav-links { display: flex; gap: 28px; font-size: 13px; margin-left: 24px; }
-  .nav-links a { color: #94a3b8; text-decoration: none; font-weight: 500; }
+  .nav-links { display: flex; gap: 24px; font-size: 13px; margin-left: 24px; }
+  .nav-links a {
+    color: #94a3b8; text-decoration: none; font-weight: 500;
+    padding: 4px 10px; border-radius: 6px; display: inline-block;
+  }
   .nav-links a.active { color: #38bdf8; font-weight: 600; }
   .search-bar {
     background: #1e293b; border: 1px solid #334155; border-radius: 8px;
-    padding: 7px 14px; font-size: 12px; color: #cbd5e1; width: 280px;
+    padding: 8px 16px; font-size: 12px; color: #cbd5e1; width: 280px;
   }
   main {
-    padding: 24px 32px;
+    padding: 20px 32px;
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: 12px;
   }
   .story-card {
     background: #131c2e;
     border: 1px solid #1e293b;
-    border-radius: 10px;
-    padding: 14px 20px;
+    border-radius: 12px;
+    padding: 16px 22px;
     display: flex;
     align-items: center;
     justify-content: space-between;
   }
-  .story-left { display: flex; align-items: center; gap: 16px; min-width: 0; flex: 1; }
+  .story-left { display: flex; align-items: center; gap: 18px; min-width: 0; flex: 1; }
   .rank { font-size: 18px; font-weight: 700; color: #64748b; width: 28px; text-align: center; }
-  .story-content { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+  .story-content { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
   .story-title {
     font-size: 15px; font-weight: 600; color: #f1f5f9; text-decoration: none;
-    display: inline-block;
+    display: inline-block; padding: 4px 12px; border-radius: 6px;
+    background: rgba(255, 255, 255, 0.04);
   }
   .story-title:hover { color: #38bdf8; }
   .story-domain { font-size: 12px; color: #38bdf8; text-decoration: none; margin-left: 8px; font-weight: normal; }
-  .meta { font-size: 12px; color: #64748b; display: flex; gap: 12px; align-items: center; }
+  .meta { font-size: 12px; color: #64748b; display: flex; gap: 14px; align-items: center; padding-left: 2px; }
   .vote-btn {
-    background: #0284c7; color: white; border: none; border-radius: 6px;
-    padding: 8px 16px; font-size: 12px; font-weight: 600; cursor: pointer; flex-shrink: 0;
+    background: #0284c7; color: white; border: none; border-radius: 8px;
+    padding: 9px 18px; font-size: 12px; font-weight: 600; cursor: pointer; flex-shrink: 0;
   }
   .badge-tag {
     background: rgba(56, 189, 248, 0.15); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.3);
