@@ -135,87 +135,87 @@ browserpilot/
 ### Phase 1: Project Setup and Foundational Infrastructure
 - [x] Repository initialization on GitHub with metadata and topics.
 - [x] Portfolio registry synchronization in MTLG ecosystem.
-- [ ] Create `pyproject.toml` and `.gitignore`.
-- [ ] Implement `src/browserpilot/config.py` with environment variable loading.
-- [ ] Set up package structure with standard exports.
+- [x] Create `pyproject.toml` and `.gitignore`.
+- [x] Implement `src/browserpilot/config.py` with environment variable loading.
+- [x] Set up package structure with standard exports.
 
 ### Phase 2: Stealth Chromium Engine and Cursor Motion
-- [ ] Implement `src/browserpilot/browser/fingerprint.py`:
+- [x] Implement `src/browserpilot/browser/fingerprint.py`:
   - Evasion scripts injected before document load.
   - Navigator properties: `webdriver: false`, `plugins`, `languages`, `platform`.
   - WebGL vendor and renderer masking.
   - AudioContext noise injection and canvas noise normalization.
-- [ ] Implement `src/browserpilot/browser/cursor_motion.py`:
+- [x] Implement `src/browserpilot/browser/cursor_motion.py`:
   - Cubic Bézier curve generation between start and target points.
   - Variable velocity profiles with acceleration and deceleration.
   - Micro-jitter and overshoot corrections.
   - Natural pre-click dwell pauses.
-- [ ] Implement `src/browserpilot/browser/stealth_context.py`:
+- [x] Implement `src/browserpilot/browser/stealth_context.py`:
   - Unified browser manager supporting `patchright` with fallback to `playwright`.
   - Anti-automation arguments (`--disable-blink-features=AutomationControlled`).
   - Viewport configuration, user agent rotation, and persistent context support.
 
 ### Phase 3: Accessibility Tree Parsing and Spatial Grounding
-- [ ] Implement `src/browserpilot/dom/spatial_matcher.py`:
+- [x] Implement `src/browserpilot/dom/spatial_matcher.py`:
   - Calculate bounding boxes and viewport intersections.
   - Filter obscured or off-screen elements.
-- [ ] Implement `src/browserpilot/dom/a11y_tree.py`:
+- [x] Implement `src/browserpilot/dom/a11y_tree.py`:
   - Query Chrome DevTools Protocol `Accessibility.getFullAXTree`.
   - Filter actionable nodes (button, link, input, select, checkbox, radio).
   - Assign stable numeric IDs (`[1]`, `[2]`, `[3]`).
   - Generate token-compact text representations for LLM prompts.
-- [ ] Implement `src/browserpilot/dom/element_highlighter.py`:
+- [x] Implement `src/browserpilot/dom/element_highlighter.py`:
   - Ephemeral badge overlay script injected into page DOM.
   - Render colored badges matching element IDs for visual inspection and streaming.
 
 ### Phase 4: Autonomous Agent Planner and Execution Loop
-- [ ] Implement `src/browserpilot/agent/models.py`:
+- [x] Implement `src/browserpilot/agent/models.py`:
   - LLM client adapter supporting OpenAI, Anthropic Claude, Gemini, and Ollama.
   - Structured output parsing with fallback repair for malformed JSON.
-- [ ] Implement `src/browserpilot/agent/actions.py`:
+- [x] Implement `src/browserpilot/agent/actions.py`:
   - Executors for `click`, `type`, `scroll`, `select`, `press_key`, `wait`, `goto`.
   - Humanized typing with variable key intervals.
-- [ ] Implement `src/browserpilot/agent/verifier.py`:
+- [x] Implement `src/browserpilot/agent/verifier.py`:
   - Post-action verification evaluating DOM mutations, network idle, and URL shifts.
   - Detection of stale elements, blocking modals, or failed submissions.
-- [ ] Implement `src/browserpilot/agent/planner.py`:
+- [x] Implement `src/browserpilot/agent/planner.py`:
   - Observe, Reason, Act, Verify loop.
   - Prompt construction combining goal, current URL, and compact a11y tree.
   - Step counter, error retry strategy, and execution trace logging.
 
 ### Phase 5: Human-in-the-Loop Handover and Detection
-- [ ] Implement `src/browserpilot/human/captcha_detector.py`:
+- [x] Implement `src/browserpilot/human/captcha_detector.py`:
   - Heuristics for Cloudflare Turnstile, Google reCAPTCHA, hCaptcha, and AWS WAF.
   - Keyword pattern matching for OTP, SMS, and authenticator challenges.
-- [ ] Implement `src/browserpilot/human/stream_relay.py`:
+- [x] Implement `src/browserpilot/human/stream_relay.py`:
   - Viewport frame capture pipeline with dynamic JPEG compression.
   - Two-way input bridge translating frontend click/type coordinates to browser events.
   - Pause and resume synchronization primitives.
 
 ### Phase 6: Server and WebSocket Telemetry
-- [ ] Implement `src/browserpilot/server/routes.py`:
+- [x] Implement `src/browserpilot/server/routes.py`:
   - Session lifecycle management (start, stop, pause, resume).
   - Mission status and step inspection endpoints.
-- [ ] Implement `src/browserpilot/server/ws_telemetry.py`:
+- [x] Implement `src/browserpilot/server/ws_telemetry.py`:
   - WebSocket hub broadcasting live frames, active element trees, and LLM thoughts.
   - Incoming client event receiver for remote interactive control.
-- [ ] Implement `src/browserpilot/server/app.py`:
+- [x] Implement `src/browserpilot/server/app.py`:
   - FastAPI application mounting API routes, WebSockets, and static frontend assets.
 
 ### Phase 7: Mission Control Web Studio (React 19)
-- [ ] Initialize modern React 19 + TypeScript + Vite project in `web/`.
-- [ ] Implement `LiveBrowserView.tsx` with remote canvas interaction.
-- [ ] Implement `ActionHistory.tsx` displaying step timelines, reasoning, and actions.
-- [ ] Implement `HumanTakeoverModal.tsx` for alert notices and manual intervention.
-- [ ] Implement `TokenUsageCard.tsx` showing tokens and estimated costs.
-- [ ] Implement `MissionControls.tsx` for starting goals, pausing, stepping, and aborting.
-- [ ] Build and bundle production frontend into static distribution.
+- [x] Initialize modern React 19 + TypeScript + Vite project in `web/`.
+- [x] Implement `LiveBrowserView.tsx` with remote canvas interaction.
+- [x] Implement `ActionHistory.tsx` displaying step timelines, reasoning, and actions.
+- [x] Implement `HumanTakeoverModal.tsx` for alert notices and manual intervention.
+- [x] Implement `TokenUsageCard.tsx` showing tokens and estimated costs.
+- [x] Implement `MissionControls.tsx` for starting goals, pausing, stepping, and aborting.
+- [x] Build and bundle production frontend into static distribution.
 
 ### Phase 8: Command-Line Interface and Validation Suite
-- [ ] Implement `src/browserpilot/cli.py` with Typer and Rich console:
+- [x] Implement `src/browserpilot/cli.py` with Typer and Rich console:
   - `browserpilot run "<goal>"`
   - `browserpilot serve --port 9660`
   - `browserpilot test-stealth`
   - `browserpilot dump-tree <url>`
-- [ ] Comprehensive automated test suite in `tests/`.
-- [ ] End-to-end verification running realistic web navigation tasks.
+- [x] Comprehensive automated test suite in `tests/`.
+- [x] End-to-end verification running realistic web navigation tasks.
