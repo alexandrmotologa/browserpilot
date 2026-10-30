@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Play, Pause, Square, Sparkles, Globe, UserCheck, Bookmark } from 'lucide-react';
+import { Play, Pause, Square, Sparkles, Globe, UserCheck, Bookmark, Check } from 'lucide-react';
 import { SessionStatus } from '../types';
 
 interface MissionControlsProps {
@@ -50,12 +50,12 @@ export const MissionControls: React.FC<MissionControlsProps> = ({
   };
 
   return (
-    <div className="bg-slate-900 border border-slate-800 rounded-xl p-4 shadow-lg space-y-4">
+    <div className="bg-slate-900 border border-slate-800 rounded-xl p-3.5 sm:p-4 shadow-lg space-y-3.5">
       <form onSubmit={handleSubmit} className="space-y-3">
         {/* Goal Input */}
         <div>
-          <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1.5 flex items-center space-x-1.5">
-            <Sparkles className="w-3.5 h-3.5 text-sky-400" />
+          <label className="block text-[11px] sm:text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1.5 flex items-center space-x-1.5">
+            <Sparkles className="w-3.5 h-3.5 text-sky-400 flex-shrink-0" />
             <span>Agent Mission Goal</span>
           </label>
           <textarea
@@ -69,10 +69,10 @@ export const MissionControls: React.FC<MissionControlsProps> = ({
         </div>
 
         {/* Start URL & Model Row */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-          <div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5 sm:gap-3">
+          <div className="min-w-0">
             <label className="block text-[11px] font-medium text-slate-400 mb-1 flex items-center space-x-1">
-              <Globe className="w-3 h-3" />
+              <Globe className="w-3 h-3 flex-shrink-0 text-slate-400" />
               <span>Starting URL</span>
             </label>
             <input
@@ -85,7 +85,7 @@ export const MissionControls: React.FC<MissionControlsProps> = ({
             />
           </div>
 
-          <div>
+          <div className="min-w-0">
             <label className="block text-[11px] font-medium text-slate-400 mb-1">
               Reasoning Model
             </label>
@@ -103,16 +103,16 @@ export const MissionControls: React.FC<MissionControlsProps> = ({
             </select>
           </div>
 
-          <div>
+          <div className="min-w-0 sm:col-span-2 lg:col-span-1">
             <label className="block text-[11px] font-medium text-slate-400 mb-1 flex items-center justify-between">
-              <span className="flex items-center space-x-1">
-                <Bookmark className="w-3 h-3" />
+              <span className="flex items-center space-x-1 truncate">
+                <Bookmark className="w-3 h-3 flex-shrink-0 text-slate-400" />
                 <span>Saved Profile</span>
               </span>
               <button
                 type="button"
                 onClick={() => setShowSaveProfile(!showSaveProfile)}
-                className="text-[10px] text-sky-400 hover:text-sky-300"
+                className="text-[10px] text-sky-400 hover:text-sky-300 font-medium whitespace-nowrap ml-1"
               >
                 + Save Current
               </button>
@@ -135,32 +135,33 @@ export const MissionControls: React.FC<MissionControlsProps> = ({
 
         {/* Save Profile Mini Bar */}
         {showSaveProfile && (
-          <div className="flex items-center space-x-2 p-2 bg-slate-950 border border-slate-800 rounded-lg">
+          <div className="flex flex-wrap sm:flex-nowrap items-center gap-2 p-2 bg-slate-950 border border-slate-800 rounded-lg">
             <input
               type="text"
               value={newProfileName}
               onChange={(e) => setNewProfileName(e.target.value)}
-              placeholder="Profile name (e.g. amazon-login)"
-              className="flex-1 bg-slate-900 border border-slate-700 rounded px-2 py-1 text-xs text-slate-200"
+              placeholder="Profile name (e.g. github-auth)"
+              className="flex-1 min-w-0 bg-slate-900 border border-slate-700 rounded px-2.5 py-1 text-xs text-slate-200"
             />
             <button
               type="button"
               onClick={handleSaveProfile}
-              className="px-3 py-1 bg-sky-500 text-slate-950 rounded text-xs font-bold"
+              className="px-3 py-1 bg-sky-500 hover:bg-sky-400 text-slate-950 rounded text-xs font-bold whitespace-nowrap flex items-center space-x-1"
             >
-              Save Session Cookies
+              <Check className="w-3 h-3" />
+              <span>Save Session</span>
             </button>
           </div>
         )}
 
-        {/* Co-Pilot Toggle & Action Button Controls */}
-        <div className="flex items-center justify-between pt-2 border-t border-slate-800/80">
-          <div className="flex items-center space-x-3">
+        {/* Action Controls & Co-Pilot Toggle */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-3 border-t border-slate-800/80">
+          <div className="flex flex-wrap items-center gap-2 sm:gap-2.5">
             {!isRunning && !isPaused ? (
               <button
                 type="submit"
                 disabled={!goal.trim()}
-                className="flex items-center space-x-1.5 px-4 py-2 rounded-lg bg-sky-500 hover:bg-sky-400 disabled:bg-slate-800 disabled:text-slate-600 text-slate-950 font-bold text-xs transition shadow-lg shadow-sky-500/20"
+                className="flex items-center space-x-1.5 px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-lg bg-sky-500 hover:bg-sky-400 disabled:bg-slate-800 disabled:text-slate-600 text-slate-950 font-bold text-xs transition shadow-lg shadow-sky-500/20 whitespace-nowrap"
               >
                 <Play className="w-3.5 h-3.5 fill-current" />
                 <span>Launch Mission</span>
@@ -169,7 +170,7 @@ export const MissionControls: React.FC<MissionControlsProps> = ({
               <button
                 type="button"
                 onClick={onResume}
-                className="flex items-center space-x-1.5 px-4 py-2 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs transition"
+                className="flex items-center space-x-1.5 px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs transition whitespace-nowrap"
               >
                 <Play className="w-3.5 h-3.5 fill-current" />
                 <span>Resume Mission</span>
@@ -178,7 +179,7 @@ export const MissionControls: React.FC<MissionControlsProps> = ({
               <button
                 type="button"
                 onClick={onPause}
-                className="flex items-center space-x-1.5 px-4 py-2 rounded-lg bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs transition"
+                className="flex items-center space-x-1.5 px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-lg bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs transition whitespace-nowrap"
               >
                 <Pause className="w-3.5 h-3.5 fill-current" />
                 <span>Pause Agent</span>
@@ -189,34 +190,37 @@ export const MissionControls: React.FC<MissionControlsProps> = ({
               <button
                 type="button"
                 onClick={onStop}
-                className="flex items-center space-x-1.5 px-3 py-2 rounded-lg bg-slate-800 hover:bg-rose-500/20 hover:text-rose-400 text-slate-300 font-medium text-xs transition border border-slate-700"
+                className="flex items-center space-x-1.5 px-3 py-1.5 sm:py-2 rounded-lg bg-slate-800 hover:bg-rose-500/20 hover:text-rose-400 text-slate-300 font-medium text-xs transition border border-slate-700 whitespace-nowrap"
               >
                 <Square className="w-3.5 h-3.5" />
                 <span>Stop</span>
               </button>
             )}
 
-            {/* Co-Pilot Checkbox */}
-            <label className="flex items-center space-x-2 text-xs text-slate-300 cursor-pointer select-none pl-2">
+            {/* Co-Pilot Checkbox Badge */}
+            <label className="flex items-center space-x-1.5 text-xs text-slate-300 cursor-pointer select-none bg-slate-950/80 hover:bg-slate-800/60 border border-slate-800 px-2.5 py-1.5 rounded-lg transition whitespace-nowrap">
               <input
                 type="checkbox"
                 checked={coPilot}
                 onChange={(e) => setCoPilot(e.target.checked)}
                 disabled={isRunning}
-                className="rounded border-slate-700 bg-slate-950 text-sky-500 focus:ring-0"
+                className="rounded border-slate-700 bg-slate-950 text-sky-500 focus:ring-0 w-3.5 h-3.5"
               />
-              <span className="flex items-center space-x-1">
-                <UserCheck className="w-3.5 h-3.5 text-sky-400" />
-                <span>Co-Pilot Mode (Approve each step)</span>
-              </span>
+              <UserCheck className="w-3.5 h-3.5 text-sky-400 flex-shrink-0" />
+              <span className="font-medium text-[11px] sm:text-xs">Co-Pilot Approval</span>
             </label>
           </div>
 
-          <div className="text-[11px] text-slate-500 font-mono">
-            Status: <span className="text-slate-300 uppercase font-semibold">{status.status}</span>
+          <div className="flex items-center justify-between sm:justify-end text-[11px] text-slate-400 font-mono pt-1 sm:pt-0 border-t sm:border-t-0 border-slate-800/40">
+            <span>Status:</span>
+            <span className="ml-1.5 px-2 py-0.5 rounded bg-slate-950 border border-slate-800 text-slate-200 uppercase font-semibold text-[10px]">
+              {status.status}
+            </span>
           </div>
         </div>
       </form>
     </div>
   );
 };
+
+export default MissionControls;

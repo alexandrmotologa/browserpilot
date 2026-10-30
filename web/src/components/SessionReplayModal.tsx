@@ -30,13 +30,13 @@ export const SessionReplayModal: React.FC<SessionReplayModalProps> = ({ archives
   const currentStep = steps[currentStepIdx] || null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 backdrop-blur-md p-6">
-      <div className="bg-slate-900 border border-slate-800 rounded-2xl max-w-5xl w-full h-[85vh] flex flex-col shadow-2xl overflow-hidden">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 backdrop-blur-md p-2 sm:p-6">
+      <div className="bg-slate-900 border border-slate-800 rounded-2xl max-w-5xl w-full h-[92vh] sm:h-[85vh] flex flex-col shadow-2xl overflow-hidden">
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-800 bg-slate-950/70">
-          <div className="flex items-center space-x-2.5">
-            <History className="w-5 h-5 text-sky-400" />
-            <h2 className="text-sm font-bold text-slate-100">
+        <div className="flex items-center justify-between px-4 sm:px-6 py-3 sm:py-4 border-b border-slate-800 bg-slate-950/70">
+          <div className="flex items-center space-x-2.5 min-w-0">
+            <History className="w-4 h-4 sm:w-5 sm:h-5 text-sky-400 flex-shrink-0" />
+            <h2 className="text-xs sm:text-sm font-bold text-slate-100 truncate">
               {selectedSessionId ? `Session Replay: ${selectedSessionId}` : 'Archived Mission Runs'}
             </h2>
           </div>
@@ -49,32 +49,33 @@ export const SessionReplayModal: React.FC<SessionReplayModalProps> = ({ archives
                 onClose();
               }
             }}
-            className="p-1 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-slate-200 transition"
+            className="p-1.5 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-slate-200 transition flex-shrink-0"
+            title="Close"
           >
-            <X className="w-5 h-5" />
+            <X className="w-4 h-4 sm:w-5 sm:h-5" />
           </button>
         </div>
 
         {/* Content */}
         {!selectedSessionId ? (
-          <div className="flex-1 overflow-y-auto p-6 space-y-3">
+          <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-3">
             {archives.length === 0 ? (
-              <div className="text-center text-slate-500 py-16 text-sm">
+              <div className="text-center text-slate-500 py-16 text-xs sm:text-sm">
                 No archived sessions found yet. Completed missions will automatically be saved here.
               </div>
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
                 {archives.map((item) => (
                   <div
                     key={item.session_id}
                     onClick={() => loadSession(item.session_id)}
-                    className="bg-slate-950/60 border border-slate-800 hover:border-sky-500/50 rounded-xl p-4 cursor-pointer transition space-y-2.5 group"
+                    className="bg-slate-950/60 border border-slate-800 hover:border-sky-500/50 rounded-xl p-3.5 sm:p-4 cursor-pointer transition space-y-2.5 group"
                   >
-                    <div className="flex items-center justify-between">
-                      <span className="text-xs font-mono font-semibold text-sky-400 group-hover:text-sky-300">
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="text-xs font-mono font-semibold text-sky-400 group-hover:text-sky-300 truncate">
                         {item.session_id}
                       </span>
-                      <span className="text-[11px] text-slate-500 flex items-center space-x-1">
+                      <span className="text-[10px] sm:text-[11px] text-slate-500 flex items-center space-x-1 flex-shrink-0">
                         <Calendar className="w-3 h-3" />
                         <span>{new Date(item.created_at).toLocaleDateString()}</span>
                       </span>
@@ -84,12 +85,12 @@ export const SessionReplayModal: React.FC<SessionReplayModalProps> = ({ archives
                       "{item.goal}"
                     </p>
 
-                    <div className="flex items-center justify-between text-[11px] text-slate-400 pt-1 border-t border-slate-800/80">
+                    <div className="flex items-center justify-between text-[11px] text-slate-400 pt-1.5 border-t border-slate-800/80">
                       <span className="flex items-center space-x-1">
                         <Layers className="w-3 h-3 text-slate-500" />
                         <span>{item.total_steps} steps</span>
                       </span>
-                      <span className="flex items-center space-x-1 font-mono text-emerald-400">
+                      <span className="flex items-center space-x-1 font-mono text-emerald-400 font-semibold">
                         <DollarSign className="w-3 h-3" />
                         <span>${item.total_cost_usd.toFixed(4)}</span>
                       </span>
@@ -102,23 +103,24 @@ export const SessionReplayModal: React.FC<SessionReplayModalProps> = ({ archives
         ) : (
           <div className="flex-1 flex flex-col md:flex-row overflow-hidden">
             {/* Left: Step Frame Preview */}
-            <div className="flex-1 bg-slate-950 flex flex-col items-center justify-center p-4 border-r border-slate-800">
+            <div className="flex-1 bg-slate-950 flex flex-col items-center justify-center p-3 sm:p-4 border-b md:border-b-0 md:border-r border-slate-800 overflow-hidden">
               {currentStep?.screenshot_base64 ? (
                 <img
-                  src={`data:image/jpeg;base64,${currentStep.screenshot_base64}`}
+                  src={currentStep.screenshot_base64.startsWith('data:') ? currentStep.screenshot_base64 : `data:image/jpeg;base64,${currentStep.screenshot_base64}`}
                   alt={`Step ${currentStep.step_number}`}
-                  className="max-h-[60vh] object-contain rounded-lg border border-slate-800 shadow-xl"
+                  className="max-h-[35vh] sm:max-h-[55vh] object-contain rounded-lg border border-slate-800 shadow-xl"
                 />
               ) : (
                 <div className="text-slate-500 text-xs">No screenshot recorded for this step</div>
               )}
 
               {/* Scrubber Controls */}
-              <div className="flex items-center space-x-4 mt-4 w-full max-w-md">
+              <div className="flex items-center space-x-2 sm:space-x-4 mt-3 sm:mt-4 w-full max-w-md px-2">
                 <button
                   disabled={currentStepIdx === 0}
                   onClick={() => setCurrentStepIdx((i) => Math.max(0, i - 1))}
                   className="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 disabled:opacity-40 text-slate-200 transition"
+                  title="Previous Step"
                 >
                   <ChevronLeft className="w-4 h-4" />
                 </button>
@@ -128,36 +130,37 @@ export const SessionReplayModal: React.FC<SessionReplayModalProps> = ({ archives
                   max={Math.max(0, steps.length - 1)}
                   value={currentStepIdx}
                   onChange={(e) => setCurrentStepIdx(parseInt(e.target.value, 10))}
-                  className="flex-1 accent-sky-500"
+                  className="flex-1 accent-sky-500 cursor-pointer"
                 />
                 <button
                   disabled={currentStepIdx >= steps.length - 1}
                   onClick={() => setCurrentStepIdx((i) => Math.min(steps.length - 1, i + 1))}
                   className="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 disabled:opacity-40 text-slate-200 transition"
+                  title="Next Step"
                 >
                   <ChevronRight className="w-4 h-4" />
                 </button>
-                <span className="text-xs font-mono text-slate-400 whitespace-nowrap">
+                <span className="text-[11px] sm:text-xs font-mono text-slate-400 whitespace-nowrap">
                   {currentStepIdx + 1} / {steps.length}
                 </span>
               </div>
             </div>
 
             {/* Right: Step Metadata & Reasoning */}
-            <div className="w-full md:w-80 p-5 overflow-y-auto space-y-4 bg-slate-900">
+            <div className="w-full md:w-80 p-3.5 sm:p-5 overflow-y-auto space-y-3 sm:space-y-4 bg-slate-900">
               <div>
                 <span className="text-[10px] uppercase font-bold text-slate-500 tracking-wider">Mission Goal</span>
                 <p className="text-xs text-slate-200 font-medium mt-0.5">{sessionData.goal}</p>
               </div>
 
               {currentStep && (
-                <div className="space-y-3 pt-2 border-t border-slate-800 text-xs">
+                <div className="space-y-2.5 pt-2 border-t border-slate-800 text-xs">
                   <div>
                     <span className="text-slate-400">Step {currentStep.step_number}:</span>
                     <p className="text-sky-400 font-medium truncate mt-0.5">{currentStep.url}</p>
                   </div>
 
-                  <div className="bg-slate-950/70 border border-slate-800 rounded-lg p-3 space-y-1">
+                  <div className="bg-slate-950/70 border border-slate-800 rounded-lg p-2.5 sm:p-3 space-y-1">
                     <span className="text-[10px] text-slate-500 uppercase font-semibold">LLM Thought:</span>
                     <p className="text-slate-300 italic text-[11px] leading-relaxed">
                       "{currentStep.thought}"
@@ -169,7 +172,7 @@ export const SessionReplayModal: React.FC<SessionReplayModalProps> = ({ archives
                       {currentStep.action.action}
                       {currentStep.action.element_id ? ` [${currentStep.action.element_id}]` : ''}
                     </span>
-                    <span className="text-slate-400 text-[10px]">
+                    <span className="text-slate-400 text-[10px] font-mono">
                       {currentStep.total_tokens} tokens
                     </span>
                   </div>
@@ -177,7 +180,7 @@ export const SessionReplayModal: React.FC<SessionReplayModalProps> = ({ archives
               )}
 
               {sessionData.final_answer && (
-                <div className="pt-3 border-t border-slate-800 text-xs space-y-1">
+                <div className="pt-2.5 border-t border-slate-800 text-xs space-y-1">
                   <span className="text-emerald-400 font-bold">Final Answer:</span>
                   <p className="text-slate-300 text-[11px] leading-relaxed whitespace-pre-wrap">
                     {sessionData.final_answer}
@@ -191,3 +194,5 @@ export const SessionReplayModal: React.FC<SessionReplayModalProps> = ({ archives
     </div>
   );
 };
+
+export default SessionReplayModal;

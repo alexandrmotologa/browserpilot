@@ -40,44 +40,51 @@ export const App: React.FC = () => {
   const [showReplayModal, setShowReplayModal] = useState(false);
 
   return (
-    <div className="min-h-screen bg-[#090d16] text-slate-100 flex flex-col font-sans">
+    <div className="min-h-screen bg-[#090d16] text-slate-100 flex flex-col font-sans antialiased">
       {/* Header */}
-      <header className="border-b border-slate-800/80 bg-slate-950/80 backdrop-blur sticky top-0 z-40 px-4 sm:px-6 py-3 sm:py-3.5 flex flex-wrap items-center justify-between gap-3">
-        <div className="flex items-center space-x-3">
-          <div className="w-8 h-8 rounded-lg bg-sky-500/20 border border-sky-500/30 flex items-center justify-center text-sky-400">
-            <Compass className="w-5 h-5" />
+      <header className="border-b border-slate-800/80 bg-slate-950/90 backdrop-blur-md sticky top-0 z-40 px-3 sm:px-6 py-2.5 sm:py-3.5 flex items-center justify-between gap-2.5">
+        <div className="flex items-center space-x-2.5 sm:space-x-3 min-w-0">
+          <div className="w-8 h-8 rounded-lg bg-sky-500/20 border border-sky-500/30 flex items-center justify-center text-sky-400 flex-shrink-0">
+            <Compass className="w-4 h-4 sm:w-5 sm:h-5" />
           </div>
-          <div>
-            <div className="flex items-center space-x-2">
-              <h1 className="text-sm font-bold tracking-tight text-white">BrowserPilot</h1>
-              <span className="text-[10px] uppercase font-mono px-1.5 py-0.5 rounded bg-sky-500/10 text-sky-400 border border-sky-500/20">
+          <div className="min-w-0">
+            <div className="flex items-center space-x-1.5 sm:space-x-2">
+              <h1 className="text-xs sm:text-sm font-bold tracking-tight text-white truncate">BrowserPilot</h1>
+              <span className="text-[9px] sm:text-[10px] uppercase font-mono px-1 sm:px-1.5 py-0.5 rounded bg-sky-500/10 text-sky-400 border border-sky-500/20 flex-shrink-0">
                 v0.1.0
               </span>
             </div>
-            <p className="text-[11px] text-slate-400 hidden sm:block">
+            <p className="text-[10px] sm:text-[11px] text-slate-400 hidden md:block truncate">
               Autonomous a11y & visual grounding browser agent
             </p>
           </div>
         </div>
 
-        <div className="flex items-center space-x-2 sm:space-x-3">
+        <div className="flex items-center space-x-1.5 sm:space-x-3 flex-shrink-0">
           {/* Past Missions Archive Button */}
           <button
             onClick={() => setShowReplayModal(true)}
-            className="flex items-center space-x-1.5 px-3 py-1 rounded-lg bg-slate-900 border border-slate-800 hover:border-sky-500/40 text-xs text-slate-300 transition"
+            className="flex items-center space-x-1 sm:space-x-1.5 px-2 sm:px-3 py-1 rounded-lg bg-slate-900 border border-slate-800 hover:border-sky-500/40 text-[11px] sm:text-xs text-slate-300 transition"
+            title="View Past Mission Runs"
           >
-            <History className="w-3.5 h-3.5 text-sky-400" />
-            <span>Missions ({archives.length})</span>
+            <History className="w-3.5 h-3.5 text-sky-400 flex-shrink-0" />
+            <span className="hidden xs:inline">Missions</span>
+            <span className="px-1.5 py-0.2 rounded-full bg-slate-800 text-[10px] text-slate-300 font-mono">
+              {archives.length}
+            </span>
           </button>
 
-          <div className="flex items-center space-x-1.5 px-2.5 py-1 rounded-full bg-slate-900 border border-slate-800 text-xs text-slate-300">
-            <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
-            <span>Stealth CDP Active</span>
+          {/* Stealth CDP Indicator */}
+          <div className="flex items-center space-x-1 sm:space-x-1.5 px-2 sm:px-2.5 py-1 rounded-full bg-slate-900 border border-slate-800 text-[11px] sm:text-xs text-slate-300">
+            <ShieldCheck className="w-3.5 h-3.5 text-emerald-400 flex-shrink-0" />
+            <span className="hidden sm:inline">Stealth CDP Active</span>
+            <span className="sm:hidden">Stealth</span>
           </div>
 
-          <div className="flex items-center space-x-2 text-xs">
+          {/* Live Status Dot */}
+          <div className="flex items-center space-x-1.5 text-[11px] sm:text-xs bg-slate-900/60 px-2 py-1 rounded-full border border-slate-800/80">
             <span
-              className={`w-2 h-2 rounded-full ${
+              className={`w-2 h-2 rounded-full flex-shrink-0 ${
                 status.status === 'running'
                   ? 'bg-emerald-400 animate-pulse'
                   : status.status === 'takeover' || status.status === 'awaiting_approval'
@@ -87,15 +94,15 @@ export const App: React.FC = () => {
                   : 'bg-slate-500'
               }`}
             />
-            <span className="text-slate-400 capitalize">{status.status}</span>
+            <span className="text-slate-300 capitalize text-[10px] sm:text-xs hidden xs:inline">{status.status}</span>
           </div>
         </div>
       </header>
 
       {/* Main Studio Viewport */}
-      <main className="flex-1 max-w-7xl w-full mx-auto p-6 grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+      <main className="flex-1 max-w-7xl w-full mx-auto p-3 sm:p-5 lg:p-6 grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-6 items-start">
         {/* Left Column: Live Browser Canvas and Controls (7 cols) */}
-        <div className="lg:col-span-7 space-y-6">
+        <div className="lg:col-span-7 space-y-4 sm:space-y-6 w-full min-w-0">
           <LiveBrowserView
             frame={viewportFrame}
             isConnected={isConnected}
@@ -123,7 +130,7 @@ export const App: React.FC = () => {
         </div>
 
         {/* Right Column: Telemetry & Step Action Timeline (5 cols) */}
-        <div className="lg:col-span-5 space-y-6">
+        <div className="lg:col-span-5 space-y-4 sm:space-y-6 w-full min-w-0">
           <TokenUsageCard
             totalTokens={status.total_tokens}
             costUsd={status.total_cost_usd}
