@@ -219,3 +219,24 @@ browserpilot/
   - `browserpilot dump-tree <url>`
 - [x] Comprehensive automated test suite in `tests/`.
 - [x] End-to-end verification running realistic web navigation tasks.
+
+### Phase 9: Advanced Capabilities and Usability Upgrades
+- [x] Implement Multi-Tab and Window Management:
+  - Track active pages, handle popup windows via `context.on("page")`.
+  - Actions: `switch_tab`, `new_tab`, `close_tab`.
+  - Interactive multi-tab bar in React 19 Web Studio.
+- [x] Implement Self-Healing Dual Click:
+  - Automatic fallback from coordinate Bézier click to scroll-into-view + DOM JavaScript click dispatch.
+- [x] Implement Safe Credential Auto-Fill:
+  - Action `fill_secret` resolving variables securely from environment without prompt exposure.
+- [x] Implement Structured Data Extraction Engine:
+  - Action `extract_data` for structured datasets (tables, pricing, product lists).
+  - One-click JSON and CSV export from Web Studio.
+- [x] Implement Co-Pilot Step-by-Step Approval Mode:
+  - Agent plans next action and pauses for operator verification and editing before dispatch.
+  - Interactive modal overlay in Web Studio with approval and modification controls.
+- [x] Implement Persistent Browser Profiles and Cookies:
+  - Save and load authentication state via `/api/profiles/save` and `/api/profiles`.
+- [x] Implement Session Recording, Archive, and Replay:
+  - Complete mission serialization to `sessions/<session_id>.json`.
+  - Timeline scrubber modal in Web Studio for post-mortem playback.

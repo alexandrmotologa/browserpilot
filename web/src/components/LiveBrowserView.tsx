@@ -1,12 +1,16 @@
 import React, { useState, useRef } from 'react';
-import { ActionableElement } from '../types';
-import { Eye, EyeOff, MousePointer, ShieldAlert, Wifi, WifiOff } from 'lucide-react';
+import { ActionableElement, BrowserTab } from '../types';
+import { Eye, EyeOff, MousePointer, ShieldAlert, Wifi, WifiOff, Plus, X, Globe } from 'lucide-react';
 
 interface LiveBrowserViewProps {
   frame: string | null;
   isConnected: boolean;
   isTakeover: boolean;
   elements: ActionableElement[];
+  tabs: BrowserTab[];
+  onSwitchTab: (index: number) => void;
+  onNewTab: (url?: string) => void;
+  onCloseTab: (index?: number) => void;
   onRemoteClick: (x: number, y: number, button?: string) => void;
   onRemoteScroll: (deltaX: number, deltaY: number) => void;
   onRemoteType: (text: string) => void;
@@ -18,6 +22,10 @@ export const LiveBrowserView: React.FC<LiveBrowserViewProps> = ({
   isConnected,
   isTakeover,
   elements,
+  tabs,
+  onSwitchTab,
+  onNewTab,
+  onCloseTab,
   onRemoteClick,
   onRemoteScroll,
   onRemoteType,
@@ -62,18 +70,56 @@ export const LiveBrowserView: React.FC<LiveBrowserViewProps> = ({
 
   return (
     <div className="flex flex-col bg-slate-900 border border-slate-800 rounded-xl overflow-hidden shadow-2xl">
-      {/* Top Browser Bar */}
-      <div className="flex items-center justify-between px-4 py-2.5 bg-slate-950/80 border-b border-slate-800">
-        <div className="flex items-center space-x-2">
-          <div className="flex space-x-1.5">
-            <span className="w-3 h-3 rounded-full bg-rose-500/80 inline-block" />
-            <span className="w-3 h-3 rounded-full bg-amber-500/80 inline-block" />
-            <span className="w-3 h-3 rounded-full bg-emerald-500/80 inline-block" />
-          </div>
-          <span className="text-xs font-medium text-slate-400 pl-2">
-            1280 x 800 Viewport
-          </span>
+      {/* Multi-Tab Bar */}
+      <div className="flex items-center space-x-1 px-3 pt-2 bg-slate-950 border-b border-slate-800 overflow-x-auto">
+        <div className="flex space-x-1.5 pr-2 items-center">
+          <span className="w-2.5 h-2.5 rounded-full bg-rose-500/80 inline-block" />
+          <span className="w-2.5 h-2.5 rounded-full bg-amber-500/80 inline-block" />
+          <span className="w-2.5 h-2.5 rounded-full bg-emerald-500/80 inline-block" />
         </div>
+
+        {/* Tab Items */}
+        {tabs.map((tab) => (
+          <div
+            key={tab.index}
+            onClick={() => onSwitchTab(tab.index)}
+            className={`flex items-center space-x-2 px-3 py-1.5 rounded-t-lg text-xs cursor-pointer border-t border-x transition max-w-[200px] select-none ${
+              tab.is_active
+                ? 'bg-slate-900 border-slate-700 text-sky-400 font-semibold'
+                : 'bg-slate-950/80 border-transparent text-slate-400 hover:text-slate-200 hover:bg-slate-900/50'
+            }`}
+          >
+            <Globe className="w-3 h-3 flex-shrink-0" />
+            <span className="truncate">{tab.title || tab.url || `Tab ${tab.index + 1}`}</span>
+            {tabs.length > 1 && (
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onCloseTab(tab.index);
+                }}
+                className="hover:text-rose-400 rounded p-0.5"
+              >
+                <X className="w-3 h-3" />
+              </button>
+            )}
+          </div>
+        ))}
+
+        {/* New Tab Button */}
+        <button
+          onClick={() => onNewTab()}
+          className="p-1 rounded text-slate-400 hover:text-slate-200 hover:bg-slate-800 transition"
+          title="Open New Tab"
+        >
+          <Plus className="w-3.5 h-3.5" />
+        </button>
+      </div>
+
+      {/* Viewport Control Bar */}
+      <div className="flex items-center justify-between px-4 py-2 bg-slate-950/90 border-b border-slate-800">
+        <span className="text-xs font-medium text-slate-400">
+          1280 x 800 Viewport
+        </span>
 
         {/* Action Toggles */}
         <div className="flex items-center space-x-2">

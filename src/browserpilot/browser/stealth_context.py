@@ -1,6 +1,7 @@
-"""Browser lifecycle management supporting Patchright and standard Playwright with stealth evasions."""
+"""Browser lifecycle management supporting Patchright, standard Playwright, and multi-tab workflows."""
 
 import logging
+from pathlib import Path
 from typing import Any
 from browserpilot.browser.cursor_motion import CursorMotion
 from browserpilot.browser.fingerprint import get_stealth_scripts
@@ -10,13 +11,14 @@ logger = logging.getLogger("browserpilot.browser")
 
 
 class BrowserManager:
-    """Manages browser instance lifecycle, stealth configuration, and page sessions."""
+    """Manages browser process lifecycle, stealth evasions, multi-tab contexts, and session persistence."""
 
     def __init__(self, settings: Settings | None = None) -> None:
         self.settings = settings or get_settings()
         self.playwright: Any = None
         self.browser: Any = None
         self.context: Any = None
+        self.pages: list[Any] = []
         self.active_page: Any = None
         self.cursor: CursorMotion = CursorMotion()
         self.engine_type: str = "unknown"
@@ -28,8 +30,8 @@ class BrowserManager:
     async def __aexit__(self, exc_type: Any, exc_val: Any, exc_tb: Any) -> None:
         await self.close()
 
-    async def launch(self) -> None:
-        """Initialize the browser process using Patchright if available, falling back to Playwright."""
+    async def launch(self, storage_state_path: str | Path | None = None) -> None:
+        """Initialize browser with stealth flags and optional storage state (cookies/session)."""
         args = [
             "--disable-blink-features=AutomationControlled",
             "--disable-features=IsolateOrigins,site-per-process",
@@ -71,6 +73,13 @@ class BrowserManager:
             self.engine_type = "playwright"
             logger.info("Launched browser engine with standard playwright")
 
+        # Resolve storage state if file exists
+        state_file = None
+        if storage_state_path:
+            p = Path(storage_state_path)
+            if p.exists():
+                state_file = str(p)
+
         # 3. Create browser context with normalized user-agent and viewport
         self.context = await self.browser.new_context(
             viewport={
@@ -83,6 +92,7 @@ class BrowserManager:
             has_touch=False,
             is_mobile=False,
             device_scale_factor=1.0,
+            storage_state=state_file,
         )
 
         # 4. Inject stealth evasions into context
@@ -90,22 +100,21 @@ class BrowserManager:
             for script in get_stealth_scripts():
                 await self.context.add_init_script(script)
 
-    async def new_page(self) -> Any:
-        """Create and activate a new browser page."""
-        if not self.context:
-            raise RuntimeError("Browser context is not initialized. Call launch() first.")
+        # 5. Listen for newly spawned popup/blank tabs
+        def _handle_new_page(new_p: Any) -> None:
+            if new_p not in self.pages:
+                self.pages.append(new_p)
+                self._attach_page_evasions(new_p)
+                self.active_page = new_p
+                logger.info(f"New browser tab opened. Active tab count: {len(self.pages)}")
 
-        page = await self.context.new_page()
+        self.context.on("page", _handle_new_page)
+
+    def _attach_page_evasions(self, page: Any) -> None:
+        """Ensure newly created or popup tabs run stealth evasions and handle close cleanup."""
         page.set_default_timeout(self.settings.browser_timeout_ms)
 
-        # Ensure stealth evasions are active even on headless page loads
         if self.settings.use_stealth:
-            for script in get_stealth_scripts():
-                try:
-                    await page.add_init_script(script)
-                except Exception:
-                    pass
-
             async def _on_dom_load(p: Any) -> None:
                 try:
                     for script in get_stealth_scripts():
@@ -115,8 +124,80 @@ class BrowserManager:
 
             page.on("domcontentloaded", _on_dom_load)
 
+        def _on_close() -> None:
+            if page in self.pages:
+                self.pages.remove(page)
+            if self.active_page == page:
+                self.active_page = self.pages[-1] if self.pages else None
+            logger.info(f"Tab closed. Remaining tabs: {len(self.pages)}")
+
+        page.on("close", lambda: _on_close())
+
+    async def new_page(self) -> Any:
+        """Create and activate a new browser page."""
+        if not self.context:
+            raise RuntimeError("Browser context is not initialized. Call launch() first.")
+
+        page = await self.context.new_page()
+        if page not in self.pages:
+            self.pages.append(page)
+        self._attach_page_evasions(page)
         self.active_page = page
         return page
+
+    async def get_tabs(self) -> list[dict[str, Any]]:
+        """Return metadata for all open tabs."""
+        tabs: list[dict[str, Any]] = []
+        for idx, page in enumerate(self.pages):
+            try:
+                title = await page.title()
+                url = page.url
+            except Exception:
+                title = "Untitled"
+                url = "about:blank"
+
+            tabs.append({
+                "index": idx,
+                "title": title or "New Tab",
+                "url": url,
+                "is_active": page == self.active_page,
+            })
+        return tabs
+
+    async def switch_tab(self, index: int) -> Any:
+        """Set active tab to the specified page index."""
+        if index < 0 or index >= len(self.pages):
+            raise IndexError(f"Tab index {index} out of range (0-{len(self.pages)-1})")
+
+        page = self.pages[index]
+        await page.bring_to_front()
+        self.active_page = page
+        logger.info(f"Switched active tab to index {index} ({page.url})")
+        return page
+
+    async def new_tab(self, url: str | None = None) -> Any:
+        """Open a new tab, navigate to optional URL, and bring to front."""
+        page = await self.new_page()
+        if url:
+            target = url if url.startswith("http") else f"https://{url}"
+            await page.goto(target, wait_until="domcontentloaded")
+        return page
+
+    async def close_tab(self, index: int | None = None) -> None:
+        """Close the active tab or tab at specified index."""
+        target_idx = len(self.pages) - 1 if index is None else index
+        if 0 <= target_idx < len(self.pages):
+            page = self.pages[target_idx]
+            await page.close()
+
+    async def save_storage_state(self, path: str | Path) -> None:
+        """Save cookies, session tokens, and localStorage to file."""
+        if not self.context:
+            raise RuntimeError("Browser context is not active.")
+        p = Path(path)
+        p.parent.mkdir(parents=True, exist_ok=True)
+        await self.context.storage_state(path=str(p))
+        logger.info(f"Saved session profile storage state to {p}")
 
     async def get_cdp_session(self, page: Any = None) -> Any:
         """Open a Chrome DevTools Protocol session attached to the page."""
@@ -148,4 +229,5 @@ class BrowserManager:
                 logger.debug(f"Error stopping playwright: {ex}")
             self.playwright = None
 
+        self.pages.clear()
         self.active_page = None

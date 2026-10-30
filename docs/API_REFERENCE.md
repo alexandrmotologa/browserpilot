@@ -70,6 +70,50 @@ Resumes an agent session that was paused by the user or triggered by a human-in-
 #### `POST /api/sessions/stop`
 Terminates the session and closes the browser context.
 
+#### `POST /api/sessions/approve`
+Approves or modifies a pending action in Co-Pilot mode.
+
+**Request Body (Optional):**
+```json
+{
+  "modified_action": {
+    "action": "click",
+    "element_id": 14
+  }
+}
+```
+
+#### `GET /api/sessions/extracted-data`
+Downloads structured dataset extracted by the agent. Accepts `?format=json` or `?format=csv`.
+
+#### `GET /api/sessions/archive`
+Returns summaries of all previously recorded agent missions.
+
+#### `GET /api/sessions/archive/{session_id}`
+Returns full execution trace for replay and analysis.
+
+### Multi-Tab Management
+
+#### `GET /api/tabs`
+Returns list of all open browser tabs and active tab indicator.
+
+#### `POST /api/tabs/switch?index=1`
+Switches active tab to specified index.
+
+#### `POST /api/tabs/new?url=https://example.com`
+Opens and focuses a new tab.
+
+#### `POST /api/tabs/close?index=1`
+Closes specified or active tab.
+
+### Profile and Cookie Persistence
+
+#### `POST /api/profiles/save?name=amazon-auth`
+Saves current session cookies and localStorage to disk.
+
+#### `GET /api/profiles`
+Lists available saved profile names.
+
 #### `GET /api/sessions/history`
 Returns the complete action log, reasoning trace, and token statistics for the current or specified session.
 

@@ -1,20 +1,32 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useAgentSession } from './hooks/useAgentSession';
 import { LiveBrowserView } from './components/LiveBrowserView';
 import { ActionHistory } from './components/ActionHistory';
 import { TokenUsageCard } from './components/TokenUsageCard';
 import { MissionControls } from './components/MissionControls';
 import { HumanTakeoverModal } from './components/HumanTakeoverModal';
-import { Compass, ShieldCheck } from 'lucide-react';
+import { CoPilotApprovalModal } from './components/CoPilotApprovalModal';
+import { SessionReplayModal } from './components/SessionReplayModal';
+import { Compass, ShieldCheck, History } from 'lucide-react';
 
 export const App: React.FC = () => {
   const {
     viewportFrame,
     steps,
+    tabs,
+    profiles,
+    archives,
+    pendingApprovalStep,
     status,
     takeoverChallenge,
     activeElements,
     isConnected,
+    switchTab,
+    newTab,
+    closeTab,
+    approveStep,
+    saveProfile,
+    downloadExtractedData,
     sendRemoteClick,
     sendRemoteScroll,
     sendRemoteType,
@@ -24,6 +36,8 @@ export const App: React.FC = () => {
     resumeSession,
     stopSession,
   } = useAgentSession();
+
+  const [showReplayModal, setShowReplayModal] = useState(false);
 
   return (
     <div className="min-h-screen bg-[#090d16] text-slate-100 flex flex-col font-sans">
@@ -47,6 +61,15 @@ export const App: React.FC = () => {
         </div>
 
         <div className="flex items-center space-x-3">
+          {/* Past Missions Archive Button */}
+          <button
+            onClick={() => setShowReplayModal(true)}
+            className="flex items-center space-x-1.5 px-3 py-1 rounded-lg bg-slate-900 border border-slate-800 hover:border-sky-500/40 text-xs text-slate-300 transition"
+          >
+            <History className="w-3.5 h-3.5 text-sky-400" />
+            <span>Missions ({archives.length})</span>
+          </button>
+
           <div className="flex items-center space-x-1.5 px-2.5 py-1 rounded-full bg-slate-900 border border-slate-800 text-xs text-slate-300">
             <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
             <span>Stealth CDP Active</span>
@@ -57,7 +80,7 @@ export const App: React.FC = () => {
               className={`w-2 h-2 rounded-full ${
                 status.status === 'running'
                   ? 'bg-emerald-400 animate-pulse'
-                  : status.status === 'takeover'
+                  : status.status === 'takeover' || status.status === 'awaiting_approval'
                   ? 'bg-amber-400 animate-bounce'
                   : status.status === 'paused'
                   ? 'bg-amber-400'
@@ -78,6 +101,10 @@ export const App: React.FC = () => {
             isConnected={isConnected}
             isTakeover={status.status === 'takeover'}
             elements={activeElements}
+            tabs={tabs}
+            onSwitchTab={switchTab}
+            onNewTab={newTab}
+            onCloseTab={closeTab}
             onRemoteClick={sendRemoteClick}
             onRemoteScroll={sendRemoteScroll}
             onRemoteType={sendRemoteType}
@@ -86,10 +113,12 @@ export const App: React.FC = () => {
 
           <MissionControls
             status={status}
+            profiles={profiles}
             onStart={startSession}
             onPause={pauseSession}
             onResume={resumeSession}
             onStop={stopSession}
+            onSaveProfile={saveProfile}
           />
         </div>
 
@@ -102,7 +131,12 @@ export const App: React.FC = () => {
             model="gpt-4o"
           />
 
-          <ActionHistory steps={steps} finalAnswer={status.final_answer} />
+          <ActionHistory
+            steps={steps}
+            finalAnswer={status.final_answer}
+            hasExtractedData={status.has_extracted_data}
+            onDownloadData={downloadExtractedData}
+          />
         </div>
       </main>
 
@@ -112,6 +146,23 @@ export const App: React.FC = () => {
           challengeType={takeoverChallenge || 'challenge'}
           onResume={resumeSession}
           onAbort={stopSession}
+        />
+      )}
+
+      {/* Co-Pilot Approval Modal */}
+      {(status.awaiting_approval || pendingApprovalStep) && pendingApprovalStep && (
+        <CoPilotApprovalModal
+          step={pendingApprovalStep}
+          onApprove={approveStep}
+          onReject={stopSession}
+        />
+      )}
+
+      {/* Session Replay Scrubber Modal */}
+      {showReplayModal && (
+        <SessionReplayModal
+          archives={archives}
+          onClose={() => setShowReplayModal(false)}
         />
       )}
     </div>

@@ -10,6 +10,12 @@ BrowserPilot extracts interactive elements directly from the accessibility tree,
 - **Stealth Browser Engine**: Integrates Patchright and custom Playwright CDP evasion scripts to mask automation flags, fake WebGL and Canvas signatures, and normalize browser properties.
 - **Human Cursor Simulation**: Emulates human pointer motion using cubic Bézier curves with randomized acceleration, micro-tremors, and natural dwell intervals.
 - **Autonomous Execution Loop**: Implements Observe, Reason, Act, Verify navigation with automatic retry handling for modal popups and stale elements.
+- **Self-Healing DOM Fallback**: Recovers from blocked clicks by scrolling targets into center view and dispatching direct DOM JavaScript events.
+- **Multi-Tab & Window Engine**: Handles tabs spawned by external links or popups, with tab switching, new tab creation, and interactive tab bar.
+- **Co-Pilot Mode**: Allows step-by-step human review and modification of planned actions before execution on sensitive sites.
+- **Safe Credential Auto-Fill**: Injects passwords from environment variables directly into input fields without sending credentials to the LLM prompt.
+- **Structured Data Extraction**: Emits structured JSON datasets with one-click CSV and JSON export from the web interface.
+- **Session Profiles & Replay Archive**: Saves session cookies and localStorage states, with a time-scrubber replay modal for past missions.
 - **Human-in-the-Loop Handover**: Flags Cloudflare Turnstile, reCAPTCHA, and two-factor authentication prompts, pauses execution, and streams an interactive canvas for manual completion.
 - **Multi-Model Support**: Connects to OpenAI, Anthropic Claude, Google Gemini, and local Ollama or vLLM endpoints.
 - **Mission Control Dashboard**: React 19 web interface with live browser streaming, action decision timeline, and real-time token cost calculation.

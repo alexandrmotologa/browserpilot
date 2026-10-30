@@ -1,33 +1,52 @@
 import React, { useState } from 'react';
-import { Play, Pause, Square, Sparkles, Globe } from 'lucide-react';
+import { Play, Pause, Square, Sparkles, Globe, UserCheck, Bookmark } from 'lucide-react';
 import { SessionStatus } from '../types';
 
 interface MissionControlsProps {
   status: SessionStatus;
-  onStart: (goal: string, startUrl?: string, model?: string) => void;
+  profiles: string[];
+  onStart: (goal: string, startUrl?: string, model?: string, coPilot?: boolean, profile?: string) => void;
   onPause: () => void;
   onResume: () => void;
   onStop: () => void;
+  onSaveProfile: (name: string) => void;
 }
 
 export const MissionControls: React.FC<MissionControlsProps> = ({
   status,
+  profiles,
   onStart,
   onPause,
   onResume,
   onStop,
+  onSaveProfile,
 }) => {
   const [goal, setGoal] = useState('');
   const [startUrl, setStartUrl] = useState('');
   const [model, setModel] = useState('gpt-4o');
+  const [coPilot, setCoPilot] = useState(false);
+  const [selectedProfile, setSelectedProfile] = useState('');
+  const [newProfileName, setNewProfileName] = useState('');
+  const [showSaveProfile, setShowSaveProfile] = useState(false);
 
-  const isRunning = status.status === 'running' || status.status === 'takeover';
+  const isRunning =
+    status.status === 'running' ||
+    status.status === 'takeover' ||
+    status.status === 'awaiting_approval';
   const isPaused = status.status === 'paused';
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!goal.trim() || isRunning) return;
-    onStart(goal, startUrl.trim() || undefined, model);
+    onStart(goal, startUrl.trim() || undefined, model, coPilot, selectedProfile || undefined);
+  };
+
+  const handleSaveProfile = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newProfileName.trim()) return;
+    onSaveProfile(newProfileName.trim());
+    setNewProfileName('');
+    setShowSaveProfile(false);
   };
 
   return (
@@ -43,18 +62,18 @@ export const MissionControls: React.FC<MissionControlsProps> = ({
             value={goal}
             onChange={(e) => setGoal(e.target.value)}
             disabled={isRunning}
-            placeholder="e.g. Find the top rated product on books.toscrape.com and tell me its price"
+            placeholder="e.g. Find the top rated product on books.toscrape.com and extract its price"
             rows={2}
             className="w-full bg-slate-950 border border-slate-700 rounded-lg p-2.5 text-xs text-slate-100 placeholder-slate-500 focus:outline-none focus:border-sky-500 transition resize-none disabled:opacity-50"
           />
         </div>
 
         {/* Start URL & Model Row */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
           <div>
             <label className="block text-[11px] font-medium text-slate-400 mb-1 flex items-center space-x-1">
               <Globe className="w-3 h-3" />
-              <span>Starting URL (Optional)</span>
+              <span>Starting URL</span>
             </label>
             <input
               type="text"
@@ -83,11 +102,60 @@ export const MissionControls: React.FC<MissionControlsProps> = ({
               <option value="ollama/llama3">Local Ollama Llama 3</option>
             </select>
           </div>
+
+          <div>
+            <label className="block text-[11px] font-medium text-slate-400 mb-1 flex items-center justify-between">
+              <span className="flex items-center space-x-1">
+                <Bookmark className="w-3 h-3" />
+                <span>Saved Profile</span>
+              </span>
+              <button
+                type="button"
+                onClick={() => setShowSaveProfile(!showSaveProfile)}
+                className="text-[10px] text-sky-400 hover:text-sky-300"
+              >
+                + Save Current
+              </button>
+            </label>
+            <select
+              value={selectedProfile}
+              onChange={(e) => setSelectedProfile(e.target.value)}
+              disabled={isRunning}
+              className="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-slate-100 focus:outline-none focus:border-sky-500 disabled:opacity-50"
+            >
+              <option value="">Clean Profile (Incognito)</option>
+              {profiles.map((p) => (
+                <option key={p} value={p}>
+                  {p}
+                </option>
+              ))}
+            </select>
+          </div>
         </div>
 
-        {/* Action Button Controls */}
-        <div className="flex items-center justify-between pt-1">
-          <div className="flex items-center space-x-2">
+        {/* Save Profile Mini Bar */}
+        {showSaveProfile && (
+          <div className="flex items-center space-x-2 p-2 bg-slate-950 border border-slate-800 rounded-lg">
+            <input
+              type="text"
+              value={newProfileName}
+              onChange={(e) => setNewProfileName(e.target.value)}
+              placeholder="Profile name (e.g. amazon-login)"
+              className="flex-1 bg-slate-900 border border-slate-700 rounded px-2 py-1 text-xs text-slate-200"
+            />
+            <button
+              type="button"
+              onClick={handleSaveProfile}
+              className="px-3 py-1 bg-sky-500 text-slate-950 rounded text-xs font-bold"
+            >
+              Save Session Cookies
+            </button>
+          </div>
+        )}
+
+        {/* Co-Pilot Toggle & Action Button Controls */}
+        <div className="flex items-center justify-between pt-2 border-t border-slate-800/80">
+          <div className="flex items-center space-x-3">
             {!isRunning && !isPaused ? (
               <button
                 type="submit"
@@ -127,6 +195,21 @@ export const MissionControls: React.FC<MissionControlsProps> = ({
                 <span>Stop</span>
               </button>
             )}
+
+            {/* Co-Pilot Checkbox */}
+            <label className="flex items-center space-x-2 text-xs text-slate-300 cursor-pointer select-none pl-2">
+              <input
+                type="checkbox"
+                checked={coPilot}
+                onChange={(e) => setCoPilot(e.target.checked)}
+                disabled={isRunning}
+                className="rounded border-slate-700 bg-slate-950 text-sky-500 focus:ring-0"
+              />
+              <span className="flex items-center space-x-1">
+                <UserCheck className="w-3.5 h-3.5 text-sky-400" />
+                <span>Co-Pilot Mode (Approve each step)</span>
+              </span>
+            </label>
           </div>
 
           <div className="text-[11px] text-slate-500 font-mono">
