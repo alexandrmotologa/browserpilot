@@ -100,6 +100,20 @@ export function useAgentSession() {
     }
   }, []);
 
+  const refreshHistory = useCallback(async () => {
+    try {
+      const res = await fetch('/api/sessions/history');
+      if (res.ok) {
+        const data = await res.json();
+        if (Array.isArray(data) && data.length > 0) {
+          setSteps(data);
+        }
+      }
+    } catch {
+      // Ignore
+    }
+  }, []);
+
   // Connect WebSocket
   useEffect(() => {
     const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
@@ -116,6 +130,8 @@ export function useAgentSession() {
         refreshTabs();
         refreshProfiles();
         refreshArchives();
+        refreshDomTree();
+        refreshHistory();
       };
 
       ws.onmessage = (event) => {

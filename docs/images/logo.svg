@@ -1,0 +1,131 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+  <defs>
+    <clipPath id="squircle-clip">
+      <rect x="24" y="24" width="976" height="976" rx="220" />
+    </clipPath>
+
+    <linearGradient id="cyan-glow" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#00f5ff"/>
+      <stop offset="100%" stop-color="#0284c7"/>
+    </linearGradient>
+
+    <linearGradient id="beak-grad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#fbbf24"/>
+      <stop offset="100%" stop-color="#d97706"/>
+    </linearGradient>
+
+    <linearGradient id="slate-facets-l" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#475569"/>
+      <stop offset="100%" stop-color="#334155"/>
+    </linearGradient>
+
+    <linearGradient id="slate-facets-d" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1e293b"/>
+      <stop offset="100%" stop-color="#0f172a"/>
+    </linearGradient>
+
+    <filter id="subtle-shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="14" stdDeviation="18" flood-color="#000000" flood-opacity="0.14" />
+    </filter>
+  </defs>
+
+  <!-- Luxury White Squircle Container -->
+  <rect x="24" y="24" width="976" height="976" rx="220" fill="#ffffff" stroke="#e2e8f0" stroke-width="6" />
+
+  <g clip-path="url(#squircle-clip)">
+    <g transform="translate(512, 512)" filter="url(#subtle-shadow)">
+
+      <!-- Hexagonal Architectural Gateway Frame -->
+      <polygon points="
+        0,-390
+        338,-195
+        338,195
+        0,390
+        -338,195
+        -338,-195
+      " fill="none" stroke="#0f172a" stroke-width="40" stroke-linejoin="round" />
+
+      <polygon points="
+        0,-355
+        307,-177
+        307,177
+        0,355
+        -307,177
+        -307,-177
+      " fill="none" stroke="#00f5ff" stroke-width="4" opacity="0.4" stroke-dasharray="16, 12" />
+
+      <!-- Watertight Solid Dark Silhouette Base -->
+      <path d="
+        M 0 -270
+        L 55 -245 L 110 -200 L 165 -120 L 210 -40 L 255 60 L 275 160 L 260 250 L 220 310 L 140 330 L 70 315 L 0 340
+        L -70 315 L -140 330 L -220 310 L -260 250 L -275 160 L -255 60 L -210 -40 L -165 -120 L -110 -200 L -55 -245
+        Z
+      " fill="#090d16" />
+
+      <!-- Left Outer Wing Stealth Facets -->
+      <polygon points="-275,160 -210,-40 -165,-120 -140,-30 -185,90 -220,230 -260,250" fill="#0f172a" />
+      <polygon points="-210,-40 -140,-30 -110,60 -185,90" fill="#1e293b" />
+      <polygon points="-185,90 -110,60 -90,160 -170,220 -220,230" fill="#334155" />
+      <polygon points="-170,220 -90,160 -60,260 -140,310 -220,310" fill="#1e293b" />
+
+      <!-- Right Outer Wing Stealth Facets (Symmetrical) -->
+      <polygon points="275,160 210,-40 165,-120 140,-30 185,90 220,230 260,250" fill="#1e293b" />
+      <polygon points="210,-40 140,-30 110,60 185,90" fill="#334155" />
+      <polygon points="185,90 110,60 90,160 170,220 220,230" fill="#475569" />
+      <polygon points="170,220 90,160 60,260 140,310 220,310" fill="#0f172a" />
+
+      <!-- Torso & Breast Armor Facets -->
+      <polygon points="0,40 -60,-20 -90,70 0,160" fill="#1e293b" />
+      <polygon points="0,40 60,-20 90,70 0,160" fill="#334155" />
+      <polygon points="-90,70 0,160 -50,260 -90,160" fill="#0f172a" />
+      <polygon points="90,70 0,160 50,260 90,160" fill="#475569" />
+      <polygon points="0,160 -50,260 0,330 50,260" fill="#1e293b" />
+      <polygon points="-50,260 0,330 -70,315" fill="#0f172a" />
+      <polygon points="50,260 0,330 70,315" fill="#334155" />
+
+      <!-- Falcon Head Crown & Crest -->
+      <polygon points="0,-270 -55,-245 -35,-190 0,-215" fill="#334155" />
+      <polygon points="0,-270 55,-245 35,-190 0,-215" fill="#475569" />
+      <polygon points="-55,-245 -110,-200 -80,-155 -35,-190" fill="#1e293b" />
+      <polygon points="55,-245 110,-200 80,-155 35,-190" fill="#334155" />
+      <polygon points="-110,-200 -165,-120 -120,-100 -80,-155" fill="#0f172a" />
+      <polygon points="110,-200 165,-120 120,-100 80,-155" fill="#1e293b" />
+
+      <!-- Helmet & Temporal Facets -->
+      <polygon points="0,-215 -35,-190 -70,-140 0,-155" fill="#1e293b" />
+      <polygon points="0,-215 35,-190 70,-140 0,-155" fill="#334155" />
+      <polygon points="-70,-140 -120,-100 -75,-60 -35,-100" fill="#0f172a" />
+      <polygon points="70,-140 120,-100 75,-60 35,-100" fill="#1e293b" />
+
+      <!-- Supraorbital Eyebrow Ridges (Alert Predator Cant) -->
+      <polygon points="0,-155 -35,-100 -75,-115" fill="#0f172a" />
+      <polygon points="0,-155 35,-100 75,-115" fill="#1e293b" />
+
+      <!-- Electric Cyan Predator Eyes (Almond Shape Angled Upward) -->
+      <polygon points="-65,-108 -32,-96 -45,-88 -72,-100" fill="url(#cyan-glow)" filter="drop-shadow(0px 0px 4px #00f5ff)" />
+      <polygon points="65,-108 32,-96 45,-88 72,-100" fill="url(#cyan-glow)" filter="drop-shadow(0px 0px 4px #00f5ff)" />
+
+      <!-- Malar (Cheek) Stripes -->
+      <polygon points="-75,-60 -120,-100 -105,-20 -50,-20" fill="#0f172a" />
+      <polygon points="75,-60 120,-100 105,-20 50,-20" fill="#1e293b" />
+      <polygon points="-50,-20 -105,-20 -80,40 -35,25" fill="#1e293b" />
+      <polygon points="50,-20 105,-20 80,40 35,25" fill="#334155" />
+
+      <!-- Raptor Beak Base / Cere -->
+      <polygon points="0,-140 -22,-85 0,-70" fill="#334155" />
+      <polygon points="0,-140 22,-85 0,-70" fill="#475569" />
+
+      <!-- Sharp Raptor Hooked Beak -->
+      <polygon points="0,-70 -20,-60 0,5" fill="url(#beak-grad)" />
+      <polygon points="0,-70 20,-60 0,5" fill="#d97706" />
+      <polygon points="0,5 -15,-40 0,-15" fill="#b45309" />
+      <polygon points="0,5 15,-40 0,-15" fill="#92400e" />
+
+      <!-- Beak Hook Tip Shadow -->
+      <polygon points="0,5 -6,2 0,-10 6,2" fill="#090d16" />
+
+      <!-- Precision Cyan Crosshair / HUD Glint (Subtle center chest) -->
+      <polygon points="0,85 10,95 0,105 -10,95" fill="#00f5ff" opacity="0.8" />
+    </g>
+  </g>
+</svg>

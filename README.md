@@ -1,8 +1,29 @@
-# BrowserPilot
+<p align="center">
+  <img src="docs/images/logo.png" alt="BrowserPilot Logo" width="130" height="130" />
+</p>
 
-Autonomous vision-language web agent and stealth browser automation engine. Combines Chrome accessibility tree parsing with visual element labeling, stealth CDP patches, and human-in-the-loop takeover.
+<h1 align="center">BrowserPilot</h1>
 
-BrowserPilot extracts interactive elements directly from the accessibility tree, assigning numeric badges to buttons, links, and input fields. This structure cuts token consumption by roughly 80% compared to agents that stream full-page screenshots on every action.
+<p align="center">
+  <strong>Autonomous vision-language web agent with a11y grounding, stealth CDP engine, and human takeover</strong>
+</p>
+
+<p align="center">
+  <a href="#key-capabilities">Features</a> •
+  <a href="#architecture">Architecture</a> •
+  <a href="#live-studio-interface">Live Studio</a> •
+  <a href="#quick-start">Quick Start</a> •
+  <a href="#cli-usage">CLI Usage</a> •
+  <a href="#license">License</a>
+</p>
+
+<p align="center">
+  <img src="docs/images/browserpilot_demo.gif" alt="BrowserPilot Live Execution Demo" width="940" />
+</p>
+
+BrowserPilot is an autonomous web agent and stealth browser automation engine. It combines Chrome accessibility tree parsing with visual element labeling, stealth CDP patches, and human-in-the-loop takeover.
+
+Instead of streaming full-page screenshots on every action, BrowserPilot extracts interactive elements directly from the accessibility tree, assigning numeric badges (`[1]`, `[2]`, `[14]`) to buttons, links, and input fields. This structure cuts token consumption by roughly 80% compared to vision-only browser agents while maintaining high precision.
 
 ## Key Capabilities
 
@@ -11,7 +32,7 @@ BrowserPilot extracts interactive elements directly from the accessibility tree,
 - **Human Cursor Simulation**: Emulates human pointer motion using cubic Bézier curves with randomized acceleration, micro-tremors, and natural dwell intervals.
 - **Autonomous Execution Loop**: Implements Observe, Reason, Act, Verify navigation with automatic retry handling for modal popups and stale elements.
 - **Self-Healing DOM Fallback**: Recovers from blocked clicks by scrolling targets into center view and dispatching direct DOM JavaScript events.
-- **Multi-Tab & Window Engine**: Handles tabs spawned by external links or popups, with tab switching, new tab creation, and interactive tab bar.
+- **Multi-Tab & Window Engine**: Handles tabs spawned by external links or popups, with tab switching, new tab creation, and an interactive tab bar.
 - **Co-Pilot Mode**: Allows step-by-step human review and modification of planned actions before execution on sensitive sites.
 - **Safe Credential Auto-Fill**: Injects passwords from environment variables directly into input fields without sending credentials to the LLM prompt.
 - **Structured Data Extraction**: Emits structured JSON datasets with one-click CSV and JSON export from the web interface.
@@ -59,6 +80,30 @@ BrowserPilot extracts interactive elements directly from the accessibility tree,
                                            +-------------------------------+
 ```
 
+## Live Studio Interface
+
+The built-in React 19 web interface provides real-time telemetry, interactive tab management, human co-pilot controls, and historical session scrubbing.
+
+### Desktop Mission Control
+<p align="center">
+  <img src="docs/images/browserpilot_desktop.png" alt="BrowserPilot Desktop Studio" width="940" />
+</p>
+
+### Responsive Mobile Interface
+<p align="center">
+  <img src="docs/images/browserpilot_mobile.png" alt="BrowserPilot Mobile Interface" width="420" />
+</p>
+
+### Co-Pilot Step Approval Mode
+<p align="center">
+  <img src="docs/images/browserpilot_copilot.png" alt="BrowserPilot Co-Pilot Approval Modal" width="940" />
+</p>
+
+### Session Scrubber & History Replay
+<p align="center">
+  <img src="docs/images/browserpilot_replay.png" alt="BrowserPilot Session Replay Scrubber" width="940" />
+</p>
+
 ## Quick Start
 
 ### Prerequisites
@@ -92,7 +137,14 @@ BrowserPilot extracts interactive elements directly from the accessibility tree,
    # or export GEMINI_API_KEY="your-api-key"
    ```
 
-### Running from the Command Line
+### Launching Mission Control
+
+Start the backend and open the web interface at `http://localhost:9660`:
+```bash
+browserpilot serve --port 9660
+```
+
+## CLI Usage
 
 Run an autonomous goal directly:
 ```bash
@@ -114,25 +166,19 @@ Verify anti-bot detection status:
 browserpilot test-stealth
 ```
 
-### Launching Mission Control
-
-Start the backend and open the web interface at `http://localhost:9660`:
-```bash
-browserpilot serve --port 9660
-```
-
 ## Project Structure
 
 ```
 browserpilot/
 ├── docs/                 # Architecture, stealth, and a11y documentation
+│   └── images/           # Mascot logo, UI screenshots, and animated demo GIF
 ├── src/browserpilot/
-│   ├── config.py         # Application settings
+│   ├── config.py         # Application settings and validation
 │   ├── browser/          # Stealth context, cursor motion, and fingerprint overrides
 │   ├── dom/              # Accessibility tree parser and visual badge overlay
 │   ├── agent/            # Observe-Reason-Act planner, actions, and verifier
 │   ├── human/            # CAPTCHA detection and interactive relay
-│   ├── server/           # FastAPI backend and WebSocket telemetry
+│   ├── server/           # FastAPI backend, session recorder, and WebSocket telemetry
 │   └── cli.py            # Typer command line interface
 ├── web/                  # React 19 mission control web interface
 ├── tests/                # Automated pytest suite

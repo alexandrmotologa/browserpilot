@@ -116,13 +116,13 @@ export const LiveBrowserView: React.FC<LiveBrowserViewProps> = ({
       </div>
 
       {/* Viewport Control Bar */}
-      <div className="flex items-center justify-between px-4 py-2 bg-slate-950/90 border-b border-slate-800">
+      <div className="flex flex-wrap items-center justify-between gap-2 px-3 sm:px-4 py-2 bg-slate-950/90 border-b border-slate-800">
         <span className="text-xs font-medium text-slate-400">
           1280 x 800 Viewport
         </span>
 
         {/* Action Toggles */}
-        <div className="flex items-center space-x-2">
+        <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
           <button
             onClick={() => setShowOverlay(!showOverlay)}
             className={`flex items-center space-x-1.5 px-2.5 py-1 rounded text-xs font-medium transition ${

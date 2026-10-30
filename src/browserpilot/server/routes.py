@@ -26,6 +26,8 @@ class ServerState:
     planner: AgentPlanner | None = None
     relay: StreamRelay | None = None
     runner_task: asyncio.Task[Any] | None = None
+    latest_frame: str | None = None
+    cached_elements: list[Any] | None = None
 
 
 state = ServerState()
@@ -372,17 +374,33 @@ async def list_profiles() -> list[str]:
 @router.get("/api/dom/tree")
 async def get_dom_tree() -> list[dict[str, Any]]:
     """Return parsed accessibility tree elements of the active browser page."""
-    if not state.browser_manager or not state.browser_manager.active_page:
-        raise HTTPException(status_code=400, detail="Browser is not active")
+    if hasattr(state, "cached_elements") and state.cached_elements:
+        return [el.model_dump() if hasattr(el, "model_dump") else el for el in state.cached_elements]
 
-    elements = await AccessibilityTreeParser.parse_page(state.browser_manager.active_page)
-    return [el.model_dump() for el in elements]
+    if not state.browser_manager or not state.browser_manager.active_page:
+        return []
+
+    try:
+        elements = await AccessibilityTreeParser.parse_page(state.browser_manager.active_page)
+        return [el.model_dump() for el in elements]
+    except Exception as ex:
+        logger.debug(f"Failed to parse active page DOM tree: {ex}")
+        return []
 
 
 @router.websocket("/ws/telemetry")
 async def ws_telemetry_endpoint(websocket: WebSocket) -> None:
     """Bi-directional WebSocket for streaming frames, receiving input, and handling approval."""
     await telemetry_hub.connect(websocket)
+
+    if state.latest_frame:
+        try:
+            await websocket.send_json({
+                "type": "viewport_frame",
+                "frame": state.latest_frame,
+            })
+        except Exception as ex:
+            logger.debug(f"Failed to send initial viewport frame: {ex}")
 
     try:
         while True:
