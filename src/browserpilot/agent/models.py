@@ -135,7 +135,13 @@ class LLMClient:
             base_url = base_url or "http://localhost:11434/v1"
             api_key = api_key or "ollama"
 
-        client = AsyncOpenAI(api_key=api_key or "sk-dummy", base_url=base_url)
+        if not api_key and provider != "ollama":
+            raise ValueError(
+                f"Missing API key for provider '{provider}'. "
+                f"Please set {provider.upper()}_API_KEY in your environment or .env file."
+            )
+
+        client = AsyncOpenAI(api_key=api_key, base_url=base_url)
 
         response = await client.chat.completions.create(
             model=model,
@@ -184,6 +190,10 @@ class LLMClient:
         from anthropic import AsyncAnthropic
 
         api_key = self.settings.anthropic_api_key or os.getenv("ANTHROPIC_API_KEY", "")
+        if not api_key:
+            raise ValueError(
+                "Missing API key for Anthropic. Please set ANTHROPIC_API_KEY in your environment or .env file."
+            )
         client = AsyncAnthropic(api_key=api_key)
 
         response = await client.messages.create(
