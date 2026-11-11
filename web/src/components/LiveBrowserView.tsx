@@ -119,19 +119,25 @@ export const LiveBrowserView: React.FC<LiveBrowserViewProps> = ({
       </div>
 
       {/* Viewport Control Bar */}
-      <div className="flex items-center justify-between gap-1.5 sm:gap-2 px-2.5 sm:px-4 py-2 bg-slate-950/90 border-b border-slate-800 flex-wrap">
-        <span className="text-[10px] sm:text-xs font-mono text-slate-400">
-          1280×800 Viewport
-        </span>
+      <div className="flex items-center justify-between gap-2 px-2.5 sm:px-4 py-2 bg-slate-950/90 border-b border-slate-800">
+        <div className="flex items-center space-x-2 min-w-0">
+          <span className="text-[10px] sm:text-xs font-mono text-slate-400 whitespace-nowrap">
+            1280×800 Viewport
+          </span>
+          <span className="text-slate-700 hidden md:inline">•</span>
+          <span className="text-[10px] sm:text-xs text-slate-500 hidden md:inline truncate">
+            Native CDP Stream
+          </span>
+        </div>
 
         {/* Action Toggles */}
-        <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap">
+        <div className="flex items-center space-x-1.5 sm:space-x-2 flex-shrink-0">
           <button
             onClick={() => setShowOverlay(!showOverlay)}
-            className={`flex items-center space-x-1 sm:space-x-1.5 px-2 sm:px-2.5 py-1 rounded text-[11px] sm:text-xs font-medium transition whitespace-nowrap ${
+            className={`flex items-center space-x-1 sm:space-x-1.5 px-2 sm:px-2.5 py-1 rounded text-[10px] sm:text-xs font-medium transition whitespace-nowrap ${
               showOverlay
                 ? 'bg-sky-500/20 text-sky-400 border border-sky-500/30'
-                : 'bg-slate-800 text-slate-400 hover:text-slate-200'
+                : 'bg-slate-800 text-slate-400 hover:text-slate-200 border border-transparent'
             }`}
             title="Toggle Accessibility Element Badges"
           >
@@ -141,27 +147,28 @@ export const LiveBrowserView: React.FC<LiveBrowserViewProps> = ({
 
           <button
             onClick={() => setInteractiveMode(!interactiveMode)}
-            className={`flex items-center space-x-1 sm:space-x-1.5 px-2 sm:px-2.5 py-1 rounded text-[11px] sm:text-xs font-medium transition whitespace-nowrap ${
+            className={`flex items-center space-x-1 sm:space-x-1.5 px-2 sm:px-2.5 py-1 rounded text-[10px] sm:text-xs font-medium transition whitespace-nowrap ${
               isInteractive
                 ? 'bg-amber-500/20 text-amber-300 border border-amber-500/40 animate-pulse'
-                : 'bg-slate-800 text-slate-400 hover:text-slate-200'
+                : 'bg-slate-800 text-slate-400 hover:text-slate-200 border border-transparent'
             }`}
             title="Toggle manual click and keystroke takeover"
           >
             <MousePointer className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
-            <span>{isInteractive ? 'Takeover Active' : 'Manual Mode'}</span>
+            <span className="hidden xs:inline">{isInteractive ? 'Takeover Active' : 'Manual Mode'}</span>
+            <span className="xs:hidden">{isInteractive ? 'Takeover' : 'Manual'}</span>
           </button>
 
-          <div className="flex items-center pl-1 text-[11px] sm:text-xs text-slate-400">
+          <div className="flex items-center pl-1 text-[10px] sm:text-xs text-slate-400">
             {isConnected ? (
               <span className="flex items-center text-emerald-400 space-x-1">
                 <Wifi className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
-                <span className="hidden xs:inline">Live</span>
+                <span className="hidden sm:inline">Live</span>
               </span>
             ) : (
               <span className="flex items-center text-slate-500 space-x-1">
                 <WifiOff className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
-                <span className="hidden xs:inline">Offline</span>
+                <span className="hidden sm:inline">Offline</span>
               </span>
             )}
           </div>

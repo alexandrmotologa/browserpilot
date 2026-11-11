@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Play, Pause, Square, Sparkles, Globe, UserCheck, Bookmark, Check } from 'lucide-react';
 import { SessionStatus } from '../types';
 
@@ -28,6 +28,13 @@ export const MissionControls: React.FC<MissionControlsProps> = ({
   const [selectedProfile, setSelectedProfile] = useState('');
   const [newProfileName, setNewProfileName] = useState('');
   const [showSaveProfile, setShowSaveProfile] = useState(false);
+
+  // Sync active goal from session state if available
+  useEffect(() => {
+    if (status.goal && (!goal || status.status !== 'idle')) {
+      setGoal(status.goal);
+    }
+  }, [status.goal, status.status]);
 
   const isRunning =
     status.status === 'running' ||
@@ -62,9 +69,9 @@ export const MissionControls: React.FC<MissionControlsProps> = ({
             value={goal}
             onChange={(e) => setGoal(e.target.value)}
             disabled={isRunning}
-            placeholder="e.g. Find the top rated product on books.toscrape.com and extract its price"
+            placeholder="e.g. Scrape top AI stories from Hacker News and extract discussion statistics into JSON"
             rows={2}
-            className="w-full bg-slate-950 border border-slate-700 rounded-lg p-2.5 text-xs text-slate-100 placeholder-slate-500 focus:outline-none focus:border-sky-500 transition resize-none disabled:opacity-50"
+            className="w-full bg-slate-950 border border-slate-700 rounded-lg p-2.5 text-xs text-slate-100 placeholder-slate-500 focus:outline-none focus:border-sky-500 transition resize-none disabled:opacity-75 disabled:text-slate-200"
           />
         </div>
 
@@ -80,8 +87,8 @@ export const MissionControls: React.FC<MissionControlsProps> = ({
               value={startUrl}
               onChange={(e) => setStartUrl(e.target.value)}
               disabled={isRunning}
-              placeholder="https://books.toscrape.com"
-              className="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-slate-100 placeholder-slate-500 focus:outline-none focus:border-sky-500 disabled:opacity-50"
+              placeholder="https://news.ycombinator.com"
+              className="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-slate-100 placeholder-slate-500 focus:outline-none focus:border-sky-500 disabled:opacity-75"
             />
           </div>
 
@@ -93,7 +100,7 @@ export const MissionControls: React.FC<MissionControlsProps> = ({
               value={model}
               onChange={(e) => setModel(e.target.value)}
               disabled={isRunning}
-              className="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-slate-100 focus:outline-none focus:border-sky-500 disabled:opacity-50"
+              className="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-slate-100 focus:outline-none focus:border-sky-500 disabled:opacity-75"
             >
               <option value="gpt-4o">OpenAI GPT-4o</option>
               <option value="gpt-4o-mini">OpenAI GPT-4o-mini</option>
@@ -121,7 +128,7 @@ export const MissionControls: React.FC<MissionControlsProps> = ({
               value={selectedProfile}
               onChange={(e) => setSelectedProfile(e.target.value)}
               disabled={isRunning}
-              className="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-slate-100 focus:outline-none focus:border-sky-500 disabled:opacity-50"
+              className="w-full bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-slate-100 focus:outline-none focus:border-sky-500 disabled:opacity-75"
             >
               <option value="">Clean Profile (Incognito)</option>
               {profiles.map((p) => (
@@ -155,8 +162,8 @@ export const MissionControls: React.FC<MissionControlsProps> = ({
         )}
 
         {/* Action Controls & Co-Pilot Toggle */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-3 border-t border-slate-800/80">
-          <div className="flex flex-wrap items-center gap-2 sm:gap-2.5">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 pt-3 border-t border-slate-800/80">
+          <div className="flex flex-wrap items-center gap-2">
             {!isRunning && !isPaused ? (
               <button
                 type="submit"
@@ -207,13 +214,24 @@ export const MissionControls: React.FC<MissionControlsProps> = ({
                 className="rounded border-slate-700 bg-slate-950 text-sky-500 focus:ring-0 w-3.5 h-3.5"
               />
               <UserCheck className="w-3.5 h-3.5 text-sky-400 flex-shrink-0" />
-              <span className="font-medium text-[11px] sm:text-xs">Co-Pilot Approval</span>
+              <span className="font-medium text-[11px] sm:text-xs">Co-Pilot Mode</span>
             </label>
           </div>
 
-          <div className="flex items-center justify-between sm:justify-end text-[11px] text-slate-400 font-mono pt-1 sm:pt-0 border-t sm:border-t-0 border-slate-800/40">
-            <span>Status:</span>
-            <span className="ml-1.5 px-2 py-0.5 rounded bg-slate-950 border border-slate-800 text-slate-200 uppercase font-semibold text-[10px]">
+          {/* Status Badge */}
+          <div className="flex items-center space-x-1.5 self-start sm:self-center bg-slate-950 border border-slate-800 px-2.5 py-1 rounded-full text-[10px] font-mono">
+            <span
+              className={`w-1.5 h-1.5 rounded-full ${
+                status.status === 'running'
+                  ? 'bg-emerald-400 animate-pulse'
+                  : status.status === 'paused'
+                  ? 'bg-amber-400'
+                  : status.status === 'completed'
+                  ? 'bg-sky-400'
+                  : 'bg-slate-500'
+              }`}
+            />
+            <span className="text-slate-400 font-semibold uppercase tracking-wider">
               {status.status}
             </span>
           </div>

@@ -123,6 +123,39 @@ export const ActionHistory: React.FC<ActionHistoryProps> = ({
                   </span>
                 )}
               </div>
+
+              {/* Extracted Data Preview Table */}
+              {s.action.extracted_data && (
+                <div className="pt-2 border-t border-slate-800/80 space-y-1.5">
+                  <div className="text-[10px] font-mono text-emerald-400 font-bold uppercase tracking-wider flex items-center justify-between">
+                    <span>Extracted Dataset</span>
+                    <span className="text-slate-500 font-normal">
+                      {Array.isArray(s.action.extracted_data) ? `${s.action.extracted_data.length} records` : '1 record'}
+                    </span>
+                  </div>
+                  <div className="grid grid-cols-1 gap-1">
+                    {Array.isArray(s.action.extracted_data) ? (
+                      s.action.extracted_data.map((item: any, idx: number) => (
+                        <div
+                          key={idx}
+                          className="flex items-center justify-between text-[11px] bg-slate-900/80 px-2.5 py-1 rounded border border-slate-800"
+                        >
+                          <span className="text-slate-300 font-medium">
+                            {item.category || item.name || item.title || Object.keys(item)[0]}
+                          </span>
+                          <span className="font-mono text-sky-400 font-bold">
+                            {item.metric || item.value || Object.values(item)[0]}
+                          </span>
+                        </div>
+                      ))
+                    ) : (
+                      <pre className="text-[10px] font-mono bg-slate-900/80 p-2 rounded text-slate-300 overflow-x-auto">
+                        {JSON.stringify(s.action.extracted_data, null, 2)}
+                      </pre>
+                    )}
+                  </div>
+                </div>
+              )}
             </div>
           ))
         )}
