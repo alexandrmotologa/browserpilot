@@ -2,10 +2,11 @@
 
 import asyncio
 import logging
-from pathlib import Path
 from typing import Any
+
 from fastapi import APIRouter, HTTPException, Query, Response, WebSocket, WebSocketDisconnect
 from pydantic import BaseModel, Field
+
 from browserpilot.agent.actions import ActionCommand
 from browserpilot.agent.planner import AgentPlanner, AgentStep
 from browserpilot.browser.stealth_context import BrowserManager
@@ -108,13 +109,17 @@ async def start_session(req: StartSessionRequest) -> SessionStatusResponse:
     cursor = state.browser_manager.cursor
 
     # Initialize streaming relay
-    state.relay = StreamRelay(page_provider=lambda: state.browser_manager.active_page if state.browser_manager else None)
+    state.relay = StreamRelay(
+        page_provider=lambda: state.browser_manager.active_page if state.browser_manager else None
+    )
 
     async def broadcast_frame(b64_frame: str) -> None:
-        await telemetry_hub.broadcast({
-            "type": "viewport_frame",
-            "frame": b64_frame,
-        })
+        await telemetry_hub.broadcast(
+            {
+                "type": "viewport_frame",
+                "frame": b64_frame,
+            }
+        )
 
     state.relay.subscribe(broadcast_frame)
     await state.relay.start_stream(fps=6.0)
@@ -122,23 +127,29 @@ async def start_session(req: StartSessionRequest) -> SessionStatusResponse:
     # Step callback broadcaster
     async def on_step(step: AgentStep) -> None:
         tabs = await state.browser_manager.get_tabs() if state.browser_manager else []
-        await telemetry_hub.broadcast({
-            "type": "step_update",
-            "step": step.model_dump(),
-            "tabs": tabs,
-        })
+        await telemetry_hub.broadcast(
+            {
+                "type": "step_update",
+                "step": step.model_dump(),
+                "tabs": tabs,
+            }
+        )
 
     async def on_takeover(challenge_type: str) -> None:
-        await telemetry_hub.broadcast({
-            "type": "human_takeover_required",
-            "challenge_type": challenge_type,
-        })
+        await telemetry_hub.broadcast(
+            {
+                "type": "human_takeover_required",
+                "challenge_type": challenge_type,
+            }
+        )
 
     async def on_approval_required(step: AgentStep) -> None:
-        await telemetry_hub.broadcast({
-            "type": "step_awaiting_approval",
-            "step": step.model_dump(),
-        })
+        await telemetry_hub.broadcast(
+            {
+                "type": "step_awaiting_approval",
+                "step": step.model_dump(),
+            }
+        )
 
     state.planner = AgentPlanner(
         goal=req.goal,
@@ -171,19 +182,23 @@ async def start_session(req: StartSessionRequest) -> SessionStatusResponse:
                 extracted_data=state.planner.extracted_data,
             )
 
-            await telemetry_hub.broadcast({
-                "type": "session_completed",
-                "final_answer": state.planner.final_answer,
-                "total_steps": len(state.planner.steps),
-                "total_cost_usd": state.planner.total_cost_usd,
-                "has_extracted_data": state.planner.extracted_data is not None,
-            })
+            await telemetry_hub.broadcast(
+                {
+                    "type": "session_completed",
+                    "final_answer": state.planner.final_answer,
+                    "total_steps": len(state.planner.steps),
+                    "total_cost_usd": state.planner.total_cost_usd,
+                    "has_extracted_data": state.planner.extracted_data is not None,
+                }
+            )
         except Exception as ex:
             logger.error(f"Mission execution error: {ex}", exc_info=True)
-            await telemetry_hub.broadcast({
-                "type": "session_error",
-                "error": str(ex),
-            })
+            await telemetry_hub.broadcast(
+                {
+                    "type": "session_error",
+                    "error": str(ex),
+                }
+            )
 
     state.runner_task = asyncio.create_task(_execute_mission())
 
@@ -290,7 +305,11 @@ async def get_extracted_data(format: str = Query(default="json", pattern="^(json
     data = state.planner.extracted_data
     if format == "csv" and isinstance(data, list):
         csv_str = SessionArchiveManager.export_csv(data)
-        return Response(content=csv_str, media_type="text/csv", headers={"Content-Disposition": "attachment; filename=extracted_data.csv"})
+        return Response(
+            content=csv_str,
+            media_type="text/csv",
+            headers={"Content-Disposition": "attachment; filename=extracted_data.csv"},
+        )
 
     return data
 
@@ -395,10 +414,12 @@ async def ws_telemetry_endpoint(websocket: WebSocket) -> None:
 
     if state.latest_frame:
         try:
-            await websocket.send_json({
-                "type": "viewport_frame",
-                "frame": state.latest_frame,
-            })
+            await websocket.send_json(
+                {
+                    "type": "viewport_frame",
+                    "frame": state.latest_frame,
+                }
+            )
         except Exception as ex:
             logger.debug(f"Failed to send initial viewport frame: {ex}")
 

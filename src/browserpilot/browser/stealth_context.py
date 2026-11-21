@@ -3,6 +3,7 @@
 import logging
 from pathlib import Path
 from typing import Any
+
 from browserpilot.browser.cursor_motion import CursorMotion
 from browserpilot.browser.fingerprint import get_stealth_scripts
 from browserpilot.config import Settings, get_settings
@@ -54,9 +55,7 @@ class BrowserManager:
                 self.engine_type = "patchright"
                 logger.info("Launched browser engine with patchright binary")
             except Exception as ex:
-                logger.warning(
-                    f"Patchright launch failed ({ex}). Falling back to standard playwright."
-                )
+                logger.warning(f"Patchright launch failed ({ex}). Falling back to standard playwright.")
                 if self.playwright:
                     await self.playwright.stop()
                     self.playwright = None
@@ -115,6 +114,7 @@ class BrowserManager:
         page.set_default_timeout(self.settings.browser_timeout_ms)
 
         if self.settings.use_stealth:
+
             async def _on_dom_load(p: Any) -> None:
                 try:
                     for script in get_stealth_scripts():
@@ -156,18 +156,20 @@ class BrowserManager:
                 title = "Untitled"
                 url = "about:blank"
 
-            tabs.append({
-                "index": idx,
-                "title": title or "New Tab",
-                "url": url,
-                "is_active": page == self.active_page,
-            })
+            tabs.append(
+                {
+                    "index": idx,
+                    "title": title or "New Tab",
+                    "url": url,
+                    "is_active": page == self.active_page,
+                }
+            )
         return tabs
 
     async def switch_tab(self, index: int) -> Any:
         """Set active tab to the specified page index."""
         if index < 0 or index >= len(self.pages):
-            raise IndexError(f"Tab index {index} out of range (0-{len(self.pages)-1})")
+            raise IndexError(f"Tab index {index} out of range (0-{len(self.pages) - 1})")
 
         page = self.pages[index]
         await page.bring_to_front()

@@ -3,10 +3,12 @@
 from contextlib import asynccontextmanager
 from pathlib import Path
 from typing import AsyncGenerator
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
+
 from browserpilot.server.routes import router, state
 
 
@@ -44,6 +46,7 @@ def create_app() -> FastAPI:
     if web_dist.exists() and (web_dist / "index.html").exists():
         app.mount("/", StaticFiles(directory=str(web_dist), html=True), name="static")
     else:
+
         @app.get("/", response_class=HTMLResponse)
         async def root() -> str:
             return """

@@ -1,9 +1,10 @@
 """Post-action verification, DOM mutation evaluation, and recovery heuristics."""
 
-import asyncio
 import logging
 from typing import Any
+
 from pydantic import BaseModel
+
 from browserpilot.agent.actions import ActionCommand
 from browserpilot.dom.a11y_tree import ActionableElement
 

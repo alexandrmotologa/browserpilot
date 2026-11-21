@@ -1,6 +1,5 @@
 """Tests for accessibility tree element extraction, spatial bounds, and prompt formatting."""
 
-import pytest
 from browserpilot.dom.a11y_tree import AccessibilityTreeParser, ActionableElement
 from browserpilot.dom.spatial_matcher import ViewportBounds, is_element_visible
 
@@ -23,7 +22,7 @@ def test_actionable_element_prompt_line() -> None:
     assert elem.center_y == 420.0
 
     prompt_line = elem.to_prompt_line()
-    assert "[14] button \"Checkout\" (x:250, y:420) [focused]" == prompt_line
+    assert '[14] button "Checkout" (x:250, y:420) [focused]' == prompt_line
 
 
 def test_accessibility_tree_formatting() -> None:

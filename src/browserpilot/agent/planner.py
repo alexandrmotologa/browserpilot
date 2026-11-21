@@ -5,13 +5,15 @@ import base64
 import logging
 import uuid
 from typing import Any, Callable, Coroutine
-from pydantic import BaseModel, Field
+
+from pydantic import BaseModel
+
 from browserpilot.agent.actions import ActionCommand, execute_action
 from browserpilot.agent.models import LLMClient, LLMResponse
 from browserpilot.agent.verifier import ActionVerifier, VerificationResult
 from browserpilot.browser.cursor_motion import CursorMotion
 from browserpilot.config import Settings, get_settings
-from browserpilot.dom.a11y_tree import AccessibilityTreeParser, ActionableElement
+from browserpilot.dom.a11y_tree import AccessibilityTreeParser
 from browserpilot.dom.element_highlighter import ElementHighlighter
 from browserpilot.human.captcha_detector import CaptchaDetector
 
@@ -150,15 +152,12 @@ class AgentPlanner:
                 f"- Step {s.step_number}: Action={s.action.action} (target={s.action.element_id}) -> Thought: {s.thought}"
             )
 
-        history_section = (
-            "\n".join(history_lines) if history_lines else "None (initial step)"
-        )
+        history_section = "\n".join(history_lines) if history_lines else "None (initial step)"
 
         tabs_section = ""
         if len(tabs) > 1:
             tab_lines = [
-                f"[{t['index']}] \"{t['title']}\" ({t['url']}){' [ACTIVE]' if t['is_active'] else ''}"
-                for t in tabs
+                f'[{t["index"]}] "{t["title"]}" ({t["url"]}){" [ACTIVE]" if t["is_active"] else ""}' for t in tabs
             ]
             tabs_section = "OPEN BROWSER TABS:\n" + "\n".join(tab_lines) + "\n\n"
 
@@ -206,9 +205,7 @@ class AgentPlanner:
                 self.is_paused = True
                 if self.on_takeover_callback:
                     await self.on_takeover_callback(challenge.challenge_type)
-                logger.warning(
-                    f"Human takeover required: {challenge.challenge_type} ({challenge.description})"
-                )
+                logger.warning(f"Human takeover required: {challenge.challenge_type} ({challenge.description})")
 
         # 4. Capture screenshot frame for live stream and telemetry
         screenshot_bytes = await page.screenshot(type="jpeg", quality=60)

@@ -4,11 +4,14 @@ import asyncio
 import json
 from pathlib import Path
 from typing import Optional
+
 import typer
 import uvicorn
 from rich.console import Console
 from rich.panel import Panel
 from rich.table import Table
+
+from browserpilot import __version__
 from browserpilot.agent.planner import AgentPlanner, AgentStep
 from browserpilot.browser.stealth_context import BrowserManager
 from browserpilot.config import get_settings
@@ -20,6 +23,33 @@ app = typer.Typer(
     add_completion=False,
 )
 console = Console()
+
+
+def version_callback(value: bool) -> None:
+    if value:
+        console.print(f"BrowserPilot v{__version__}")
+        raise typer.Exit()
+
+
+@app.callback()
+def main(
+    version: Optional[bool] = typer.Option(
+        None,
+        "--version",
+        "-v",
+        help="Show version and exit.",
+        callback=version_callback,
+        is_eager=True,
+    ),
+) -> None:
+    """Autonomous vision-language web agent with a11y grounding and stealth CDP engine."""
+    pass
+
+
+@app.command(name="version")
+def version_command() -> None:
+    """Show BrowserPilot version."""
+    console.print(f"BrowserPilot v{__version__}")
 
 
 @app.command(name="run")

@@ -14,25 +14,16 @@ class CursorMotion:
         self.y = start_y
 
     @staticmethod
-    def _bezier_point(
-        p0: float, p1: float, p2: float, p3: float, t: float
-    ) -> float:
+    def _bezier_point(p0: float, p1: float, p2: float, p3: float, t: float) -> float:
         """Evaluate a cubic Bezier curve at interpolation parameter t (0 <= t <= 1)."""
-        return (
-            ((1 - t) ** 3) * p0
-            + 3 * ((1 - t) ** 2) * t * p1
-            + 3 * (1 - t) * (t**2) * p2
-            + (t**3) * p3
-        )
+        return ((1 - t) ** 3) * p0 + 3 * ((1 - t) ** 2) * t * p1 + 3 * (1 - t) * (t**2) * p2 + (t**3) * p3
 
     @staticmethod
     def _ease_in_out(t: float) -> float:
         """Apply smooth ease-in-out interpolation curve."""
         return t * t * (3.0 - 2.0 * t)
 
-    def generate_path(
-        self, target_x: float, target_y: float, steps: int | None = None
-    ) -> list[tuple[float, float]]:
+    def generate_path(self, target_x: float, target_y: float, steps: int | None = None) -> list[tuple[float, float]]:
         """Compute human-like waypoint coordinates between current position and target."""
         p0_x, p0_y = self.x, self.y
         p3_x, p3_y = target_x, target_y
@@ -75,9 +66,7 @@ class CursorMotion:
 
         return points
 
-    async def move_to(
-        self, page: Any, target_x: float, target_y: float
-    ) -> None:
+    async def move_to(self, page: Any, target_x: float, target_y: float) -> None:
         """Smoothly move mouse pointer to destination coordinates on the given page."""
         path = self.generate_path(target_x, target_y)
 

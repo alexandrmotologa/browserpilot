@@ -1,6 +1,5 @@
 """Tests for action command schema validation and JSON extraction heuristics."""
 
-import pytest
 from browserpilot.agent.actions import ActionCommand
 from browserpilot.agent.models import compute_cost, extract_json_from_text
 

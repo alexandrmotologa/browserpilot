@@ -1,12 +1,15 @@
 """Tests for human cursor Bézier motion generation and easing."""
 
 import math
+
 from browserpilot.browser.cursor_motion import CursorMotion
 
 
 def test_bezier_interpolation() -> None:
     """Verify cubic Bézier formula endpoints and bounds."""
     motion = CursorMotion(start_x=0.0, start_y=0.0)
+    assert motion.x == 0.0
+    assert motion.y == 0.0
 
     # At t=0 should match start
     assert CursorMotion._bezier_point(0, 50, 150, 200, 0.0) == 0.0

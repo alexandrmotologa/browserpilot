@@ -1,6 +1,7 @@
 """Tests for multi-tab browser context management and tab switching."""
 
 import pytest
+
 from browserpilot.browser.stealth_context import BrowserManager
 from browserpilot.config import Settings
 

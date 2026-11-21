@@ -57,14 +57,16 @@ class SessionArchiveManager:
         for file in sorted(SESSIONS_DIR.glob("*.json"), key=lambda f: f.stat().st_mtime, reverse=True):
             try:
                 data = json.loads(file.read_text(encoding="utf-8"))
-                summaries.append({
-                    "session_id": data.get("session_id", file.stem),
-                    "goal": data.get("goal", ""),
-                    "created_at": data.get("created_at", ""),
-                    "total_steps": data.get("total_steps", 0),
-                    "total_cost_usd": data.get("total_cost_usd", 0.0),
-                    "has_extracted_data": data.get("extracted_data") is not None,
-                })
+                summaries.append(
+                    {
+                        "session_id": data.get("session_id", file.stem),
+                        "goal": data.get("goal", ""),
+                        "created_at": data.get("created_at", ""),
+                        "total_steps": data.get("total_steps", 0),
+                        "total_cost_usd": data.get("total_cost_usd", 0.0),
+                        "has_extracted_data": data.get("extracted_data") is not None,
+                    }
+                )
             except Exception as ex:
                 logger.debug(f"Failed to read session file {file}: {ex}")
 

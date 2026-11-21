@@ -63,10 +63,7 @@ class ElementHighlighter:
     @staticmethod
     async def inject_badges(page: Any, elements: list[dict[str, Any]]) -> None:
         """Render numeric badges matching element IDs onto the active page viewport."""
-        badge_payload = [
-            {"id": el["id"], "x": el["x"], "y": el["y"]}
-            for el in elements
-        ]
+        badge_payload = [{"id": el["id"], "x": el["x"], "y": el["y"]} for el in elements]
         await page.evaluate(HIGHLIGHT_INJECTION_SCRIPT, badge_payload)
 
     @staticmethod

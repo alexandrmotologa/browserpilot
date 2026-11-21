@@ -1,10 +1,10 @@
 """Tests for Co-Pilot step approval and self-healing action recovery."""
 
 import pytest
+
 from browserpilot.agent.actions import ActionCommand, execute_action
 from browserpilot.agent.models import LLMResponse
 from browserpilot.agent.planner import AgentPlanner
-from browserpilot.browser.cursor_motion import CursorMotion
 from browserpilot.browser.stealth_context import BrowserManager
 from browserpilot.config import Settings
 from browserpilot.dom.a11y_tree import ActionableElement

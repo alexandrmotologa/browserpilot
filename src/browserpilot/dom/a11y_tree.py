@@ -1,9 +1,10 @@
 """Accessibility tree parser extracting actionable nodes and formatting token-compact prompts."""
 
-import json
 import logging
 from typing import Any
+
 from pydantic import BaseModel, Field
+
 from browserpilot.dom.spatial_matcher import ViewportBounds, is_element_visible
 
 logger = logging.getLogger("browserpilot.dom")
@@ -187,10 +188,7 @@ class ActionableElement(BaseModel):
         flag_str = f" [{', '.join(flags)}]" if flags else ""
         label = f'"{self.name}"' if self.name else ""
 
-        return (
-            f"[{self.id}] {self.role} {label} "
-            f"(x:{int(self.center_x)}, y:{int(self.center_y)}){flag_str}".strip()
-        )
+        return f"[{self.id}] {self.role} {label} (x:{int(self.center_x)}, y:{int(self.center_y)}){flag_str}".strip()
 
 
 class AccessibilityTreeParser:

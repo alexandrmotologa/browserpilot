@@ -39,9 +39,7 @@ class StreamRelay:
                 page = self.page_provider()
                 if page:
                     try:
-                        screenshot_bytes = await page.screenshot(
-                            type="jpeg", quality=55, timeout=1500
-                        )
+                        screenshot_bytes = await page.screenshot(type="jpeg", quality=55, timeout=1500)
                         b64_frame = base64.b64encode(screenshot_bytes).decode("utf-8")
                         for sub in list(self.frame_subscribers):
                             try:
@@ -67,9 +65,7 @@ class StreamRelay:
                 pass
             self._stream_task = None
 
-    async def handle_remote_click(
-        self, x: float, y: float, button: str = "left"
-    ) -> None:
+    async def handle_remote_click(self, x: float, y: float, button: str = "left") -> None:
         """Dispatch remote mouse click to browser page."""
         page = self.page_provider()
         if not page:

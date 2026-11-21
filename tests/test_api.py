@@ -1,6 +1,7 @@
 """Tests for FastAPI endpoints and health inspection."""
 
 from fastapi.testclient import TestClient
+
 from browserpilot.server.app import create_app
 
 

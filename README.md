@@ -146,6 +146,13 @@ browserpilot serve --port 9660
 
 ## CLI Usage
 
+Check version:
+```bash
+browserpilot --version
+browserpilot -v
+browserpilot version
+```
+
 Run an autonomous goal directly:
 ```bash
 browserpilot run "Go to wikipedia.org and find the population of Tokyo"

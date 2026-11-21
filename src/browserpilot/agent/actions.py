@@ -5,7 +5,9 @@ import logging
 import os
 import random
 from typing import Any, Literal
+
 from pydantic import BaseModel, Field
+
 from browserpilot.browser.cursor_motion import CursorMotion
 from browserpilot.dom.a11y_tree import ActionableElement
 

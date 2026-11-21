@@ -6,7 +6,9 @@ import os
 import re
 import time
 from typing import Any
-from pydantic import BaseModel, Field
+
+from pydantic import BaseModel
+
 from browserpilot.config import Settings, get_settings
 
 logger = logging.getLogger("browserpilot.agent.models")
@@ -54,9 +56,7 @@ def compute_cost(model_name: str, prompt_tokens: int, completion_tokens: int) ->
         pricing = (1.00, 3.00)  # Conservative generic rate
 
     in_rate, out_rate = pricing
-    cost = (prompt_tokens * (in_rate / 1_000_000.0)) + (
-        completion_tokens * (out_rate / 1_000_000.0)
-    )
+    cost = (prompt_tokens * (in_rate / 1_000_000.0)) + (completion_tokens * (out_rate / 1_000_000.0))
     return round(cost, 6)
 
 
@@ -101,9 +101,7 @@ class LLMClient:
         if provider == "anthropic":
             return await self._call_anthropic(system_prompt, user_prompt, model, start_time)
         elif provider in ("openai", "gemini", "ollama"):
-            return await self._call_openai_compatible(
-                system_prompt, user_prompt, model, start_time, provider
-            )
+            return await self._call_openai_compatible(system_prompt, user_prompt, model, start_time, provider)
         else:
             raise ValueError(f"Unsupported LLM provider: {provider}")
 
@@ -122,15 +120,8 @@ class LLMClient:
         base_url = self.settings.llm_base_url
 
         if provider == "gemini":
-            api_key = (
-                self.settings.gemini_api_key
-                or os.getenv("GEMINI_API_KEY")
-                or api_key
-            )
-            base_url = (
-                base_url
-                or "https://generativelanguage.googleapis.com/v1beta/openai/"
-            )
+            api_key = self.settings.gemini_api_key or os.getenv("GEMINI_API_KEY") or api_key
+            base_url = base_url or "https://generativelanguage.googleapis.com/v1beta/openai/"
         elif provider == "ollama":
             base_url = base_url or "http://localhost:11434/v1"
             api_key = api_key or "ollama"
@@ -156,14 +147,8 @@ class LLMClient:
         raw_content = response.choices[0].message.content or "{}"
         parsed = extract_json_from_text(raw_content)
 
-        prompt_tokens = (
-            response.usage.prompt_tokens if response.usage else len(user_prompt) // 4
-        )
-        completion_tokens = (
-            response.usage.completion_tokens
-            if response.usage
-            else len(raw_content) // 4
-        )
+        prompt_tokens = response.usage.prompt_tokens if response.usage else len(user_prompt) // 4
+        completion_tokens = response.usage.completion_tokens if response.usage else len(raw_content) // 4
         total_tokens = prompt_tokens + completion_tokens
 
         latency_ms = (time.perf_counter() - start_time) * 1000.0

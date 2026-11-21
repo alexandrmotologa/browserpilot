@@ -1,7 +1,7 @@
 """End-to-end integration tests verifying agent loop and DOM interactions."""
 
 import pytest
-from browserpilot.agent.actions import ActionCommand
+
 from browserpilot.agent.models import LLMResponse
 from browserpilot.agent.planner import AgentPlanner
 from browserpilot.browser.stealth_context import BrowserManager

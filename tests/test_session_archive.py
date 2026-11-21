@@ -1,6 +1,7 @@
 """Tests for session recording, archive serialization, and CSV/JSON data export."""
 
 from pathlib import Path
+
 from browserpilot.server.session_recorder import SessionArchiveManager
 
 

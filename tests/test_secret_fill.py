@@ -1,9 +1,10 @@
 """Tests for secure credential auto-fill without LLM exposure."""
 
 import os
+
 import pytest
+
 from browserpilot.agent.actions import ActionCommand, execute_action
-from browserpilot.browser.cursor_motion import CursorMotion
 from browserpilot.browser.stealth_context import BrowserManager
 from browserpilot.config import Settings
 from browserpilot.dom.a11y_tree import ActionableElement
